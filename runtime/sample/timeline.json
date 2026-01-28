@@ -1,0 +1,43 @@
+{
+  "duration_sec": 4.0,
+  "scenes": [
+    {
+      "scene_id": "scene-1",
+      "start_sec": 0.0,
+      "end_sec": 4.0,
+      "layers": [
+        {
+          "type": "background",
+          "asset_id": "runtime/sample/background.png",
+          "start_sec": 0.0,
+          "end_sec": 4.0,
+          "z": 0
+        },
+        {
+          "type": "actor",
+          "asset_id": "runtime/sample/actor.png",
+          "start_sec": 0.0,
+          "end_sec": 4.0,
+          "z": 1,
+          "position": {"x": 0.4, "y": 0.2},
+          "scale": 4.0
+        },
+        {
+          "type": "caption",
+          "asset_id": "runtime/sample/subtitles.srt",
+          "start_sec": 0.0,
+          "end_sec": 4.0,
+          "z": 2
+        }
+      ],
+      "audio": [
+        {
+          "type": "dialogue",
+          "asset_id": "runtime/sample/tone.wav",
+          "start_sec": 0.0,
+          "end_sec": 4.0
+        }
+      ]
+    }
+  ]
+}

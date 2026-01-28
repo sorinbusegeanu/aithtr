@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "scene_plan.schema.json",
+  "title": "ScenePlan",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["scenes"],
+  "properties": {
+    "scenes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["scene_id", "stage", "entrances", "reactions", "subtitle_placement"],
+        "properties": {
+          "scene_id": {"type": "string", "minLength": 1},
+          "stage": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["character_id", "x", "y", "scale"],
+              "properties": {
+                "character_id": {"type": "string", "minLength": 1},
+                "x": {"type": "number", "minimum": 0, "maximum": 1},
+                "y": {"type": "number", "minimum": 0, "maximum": 1},
+                "scale": {"type": "number", "minimum": 0.1, "maximum": 3.0}
+              }
+            }
+          },
+          "entrances": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["character_id", "time_sec", "action"],
+              "properties": {
+                "character_id": {"type": "string", "minLength": 1},
+                "time_sec": {"type": "number", "minimum": 0},
+                "action": {"type": "string", "enum": ["enter", "exit"]}
+              }
+            }
+          },
+          "reactions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["character_id", "time_sec", "duration_sec", "reaction"],
+              "properties": {
+                "character_id": {"type": "string", "minLength": 1},
+                "time_sec": {"type": "number", "minimum": 0},
+                "duration_sec": {"type": "number", "minimum": 0},
+                "reaction": {"type": "string", "minLength": 1}
+              }
+            }
+          },
+          "subtitle_placement": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["x", "y"],
+            "properties": {
+              "x": {"type": "number", "minimum": 0, "maximum": 1},
+              "y": {"type": "number", "minimum": 0, "maximum": 1}
+            }
+          }
+        }
+      }
+    }
+  }
+}

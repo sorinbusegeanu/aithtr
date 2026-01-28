@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "qc_report.schema.json",
+  "title": "QCReport",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["duration_sec", "audio", "video", "subtitles", "errors"],
+  "properties": {
+    "duration_sec": {"type": "number", "minimum": 0},
+    "audio": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["clipping", "silence_gaps"],
+      "properties": {
+        "clipping": {"type": "boolean"},
+        "silence_gaps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["start_sec", "end_sec"],
+            "properties": {
+              "start_sec": {"type": "number", "minimum": 0},
+              "end_sec": {"type": "number", "minimum": 0}
+            }
+          }
+        }
+      }
+    },
+    "video": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["black_frames", "fps"],
+      "properties": {
+        "black_frames": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["start_sec", "end_sec"],
+            "properties": {
+              "start_sec": {"type": "number", "minimum": 0},
+              "end_sec": {"type": "number", "minimum": 0}
+            }
+          }
+        },
+        "fps": {"type": "number", "minimum": 1}
+      }
+    },
+    "subtitles": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["missing"],
+      "properties": {
+        "missing": {"type": "boolean"}
+      }
+    },
+    "errors": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1}
+    }
+  }
+}

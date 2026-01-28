@@ -1,0 +1,89 @@
+version: "3.9"
+
+services:
+  mcp-assets:
+    image: python:3.11-slim
+    working_dir: /app
+    volumes:
+      - ..:/app
+    environment:
+      MCP_TRANSPORT: "http"
+      MCP_HOST: "0.0.0.0"
+      MCP_PORT: "7101"
+      MCP_PATH: "/mcp"
+    command: ["bash", "-lc", "pip install --no-cache-dir mcp && python mcp_servers/assets/mcp_server.py"]
+    ports:
+      - "7101:7101"
+
+  mcp-memory:
+    image: python:3.11-slim
+    working_dir: /app
+    volumes:
+      - ..:/app
+    environment:
+      MCP_TRANSPORT: "http"
+      MCP_HOST: "0.0.0.0"
+      MCP_PORT: "7102"
+      MCP_PATH: "/mcp"
+    command: ["bash", "-lc", "pip install --no-cache-dir mcp && python mcp_servers/memory/mcp_server.py"]
+    ports:
+      - "7102:7102"
+
+  mcp-tts:
+    image: python:3.11-slim
+    working_dir: /app
+    volumes:
+      - ..:/app
+    environment:
+      MCP_TRANSPORT: "http"
+      MCP_HOST: "0.0.0.0"
+      MCP_PORT: "7103"
+      MCP_PATH: "/mcp"
+    command: ["bash", "-lc", "pip install --no-cache-dir mcp && python mcp_servers/tts/mcp_server.py"]
+    ports:
+      - "7103:7103"
+
+  mcp-lipsync:
+    image: python:3.11-slim
+    working_dir: /app
+    volumes:
+      - ..:/app
+    environment:
+      MCP_TRANSPORT: "http"
+      MCP_HOST: "0.0.0.0"
+      MCP_PORT: "7104"
+      MCP_PATH: "/mcp"
+    command: ["bash", "-lc", "pip install --no-cache-dir mcp && python mcp_servers/lipsync/mcp_server.py"]
+    ports:
+      - "7104:7104"
+
+  mcp-render:
+    image: python:3.11-slim
+    working_dir: /app
+    volumes:
+      - ..:/app
+    environment:
+      MCP_TRANSPORT: "http"
+      MCP_HOST: "0.0.0.0"
+      MCP_PORT: "7105"
+      MCP_PATH: "/mcp"
+      FFMPEG_BIN: "ffmpeg"
+    command: ["bash", "-lc", "apt-get update && apt-get install -y ffmpeg && pip install --no-cache-dir mcp && python mcp_servers/render/mcp_server.py"]
+    ports:
+      - "7105:7105"
+
+  mcp-qc:
+    image: python:3.11-slim
+    working_dir: /app
+    volumes:
+      - ..:/app
+    environment:
+      MCP_TRANSPORT: "http"
+      MCP_HOST: "0.0.0.0"
+      MCP_PORT: "7106"
+      MCP_PATH: "/mcp"
+      FFMPEG_BIN: "ffmpeg"
+      FFPROBE_BIN: "ffprobe"
+    command: ["bash", "-lc", "apt-get update && apt-get install -y ffmpeg && pip install --no-cache-dir mcp && python mcp_servers/qc/mcp_server.py"]
+    ports:
+      - "7106:7106"

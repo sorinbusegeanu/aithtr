@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "episode_manifest.schema.json",
+  "title": "EpisodeManifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["episode_id", "status", "artifacts", "steps"],
+  "properties": {
+    "episode_id": {"type": "string", "minLength": 1},
+    "status": {"type": "string", "enum": ["pending", "running", "failed", "completed"]},
+    "artifacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "episode_brief",
+        "screenplay",
+        "cast_plan",
+        "scene_assets",
+        "scene_plan",
+        "timeline",
+        "preview_mp4",
+        "episode_mp4",
+        "qc_report"
+      ],
+      "properties": {
+        "episode_brief": {"type": "string", "minLength": 1},
+        "screenplay": {"type": "string", "minLength": 1},
+        "cast_plan": {"type": "string", "minLength": 1},
+        "scene_assets": {"type": "string", "minLength": 1},
+        "scene_plan": {"type": "string", "minLength": 1},
+        "timeline": {"type": "string", "minLength": 1},
+        "preview_mp4": {"type": "string", "minLength": 1},
+        "episode_mp4": {"type": "string", "minLength": 1},
+        "qc_report": {"type": "string", "minLength": 1}
+      }
+    },
+    "steps": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "status"],
+        "properties": {
+          "name": {"type": "string", "minLength": 1},
+          "status": {"type": "string", "enum": ["pending", "running", "failed", "completed"]},
+          "started_at": {"type": "string", "format": "date-time"},
+          "ended_at": {"type": "string", "format": "date-time"},
+          "error": {"type": "string", "minLength": 1}
+        }
+      }
+    }
+  }
+}
