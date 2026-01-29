@@ -1,0 +1,20 @@
+{
+  "required_edits": [
+    "Reduce redundant lines by Captain Zog.",
+    "Add more dialogue for Wally Whisker to show his character development."
+  ],
+  "suggested_changes": [
+    "Consider adding a scene where the team discusses their findings and reactions.",
+    "Introduce a subplot involving a potential conflict between Dr. Zoidberg and Captain Zog over the alien's behavior."
+  ],
+  "duration_targets": {
+    "total_duration": "12 minutes",
+    "per_scene": {
+      "scene_1": "2 minutes",
+      "scene_2": "3 minutes",
+      "scene_3": "2 minutes",
+      "scene_4": "2 minutes",
+      "scene_5": "3 minutes"
+    }
+  }
+}

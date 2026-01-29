@@ -1,0 +1,87 @@
+{
+  "cast_plan": {
+    "roles": [
+      {
+        "role": "Narrator",
+        "character_id": "A",
+        "voice_id": "voice-default",
+        "avatar_id": "avatar-default",
+        "emotion_map": {
+          "neutral": {
+            "style": "neutral"
+          },
+          "happy": {
+            "style": "warm"
+          },
+          "sad": {
+            "style": "soft"
+          },
+          "angry": {
+            "style": "sharp"
+          }
+        }
+      },
+      {
+        "role": "Captain Zog",
+        "character_id": "B",
+        "voice_id": "voice-default",
+        "avatar_id": "avatar-default",
+        "emotion_map": {
+          "neutral": {
+            "style": "neutral"
+          },
+          "happy": {
+            "style": "warm"
+          },
+          "sad": {
+            "style": "soft"
+          },
+          "angry": {
+            "style": "sharp"
+          }
+        }
+      },
+      {
+        "role": "Dr. Quark",
+        "character_id": "C",
+        "voice_id": "voice-default",
+        "avatar_id": "avatar-default",
+        "emotion_map": {
+          "neutral": {
+            "style": "neutral"
+          },
+          "happy": {
+            "style": "warm"
+          },
+          "sad": {
+            "style": "soft"
+          },
+          "angry": {
+            "style": "sharp"
+          }
+        }
+      },
+      {
+        "role": "Squishy the Robot",
+        "character_id": "D",
+        "voice_id": "voice-default",
+        "avatar_id": "avatar-default",
+        "emotion_map": {
+          "neutral": {
+            "style": "neutral"
+          },
+          "happy": {
+            "style": "warm"
+          },
+          "sad": {
+            "style": "soft"
+          },
+          "angry": {
+            "style": "sharp"
+          }
+        }
+      }
+    ]
+  },
+  "cast_bible_update": {}
+}

@@ -1,0 +1,16 @@
+{
+  "required_edits": [
+    "Reduce redundant lines in Captain Zog's monologues.",
+    "Add more dialogue for Dr. Zoidberg to convey his observations more vividly.",
+    "Increase interaction between characters to enhance comedic timing."
+  ],
+  "suggested_changes": [
+    "Consider adding a scene where the aliens reveal themselves in a humorous way.",
+    "Introduce a subplot involving the ship's AI system interacting with the aliens.",
+    "Create a brief montage showing the crew's preparations before the mission starts."
+  ],
+  "duration_targets": {
+    "total_duration": "1800 seconds",
+    "per_scene": "200 seconds"
+  }
+}

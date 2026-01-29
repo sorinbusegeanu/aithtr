@@ -1,0 +1,14 @@
+{
+  "required_edits": [
+    "Reduce repetition in dialogue.",
+    "Add more varied emotions and reactions."
+  ],
+  "suggested_changes": [
+    "Consider adding a brief scene where Captain Zog and Dr. Zoidberg discuss their findings in detail.",
+    "Introduce a new character who reacts to the discovery, adding depth to the exploration."
+  ],
+  "duration_targets": {
+    "total_scene_duration": "1 minute",
+    "dialogue_per_minute": "2 lines"
+  }
+}

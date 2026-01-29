@@ -1,0 +1,209 @@
+{
+  "scenes": [
+    {
+      "scene_id": "1",
+      "stage": [
+        {
+          "character_id": "Narrator",
+          "x": 0.5,
+          "y": 0.5,
+          "scale": 1
+        }
+      ],
+      "entrances": [],
+      "reactions": [],
+      "subtitle_placement": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "scene_id": "2",
+      "stage": [
+        {
+          "character_id": "Captain Zog",
+          "x": 0.5,
+          "y": 0.5,
+          "scale": 1
+        },
+        {
+          "character_id": "Dr. Quark",
+          "x": 0.5,
+          "y": 0.5,
+          "scale": 1
+        }
+      ],
+      "entrances": [
+        {
+          "character_id": "Captain Zog",
+          "time_sec": 0,
+          "action": "enter"
+        },
+        {
+          "character_id": "Dr. Quark",
+          "time_sec": 0,
+          "action": "enter"
+        }
+      ],
+      "reactions": [],
+      "subtitle_placement": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "scene_id": "3",
+      "stage": [
+        {
+          "character_id": "Captain Zog",
+          "x": 0.5,
+          "y": 0.5,
+          "scale": 1
+        },
+        {
+          "character_id": "Dr. Quark",
+          "x": 0.5,
+          "y": 0.5,
+          "scale": 1
+        },
+        {
+          "character_id": "Squishy the Robot",
+          "x": 0.5,
+          "y": 0.5,
+          "scale": 1
+        }
+      ],
+      "entrances": [
+        {
+          "character_id": "Captain Zog",
+          "time_sec": 0,
+          "action": "enter"
+        },
+        {
+          "character_id": "Dr. Quark",
+          "time_sec": 0,
+          "action": "enter"
+        },
+        {
+          "character_id": "Squishy the Robot",
+          "time_sec": 0,
+          "action": "enter"
+        }
+      ],
+      "reactions": [],
+      "subtitle_placement": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "scene_id": "4",
+      "stage": [
+        {
+          "character_id": "Captain Zog",
+          "x": 0.5,
+          "y": 0.5,
+          "scale": 1
+        },
+        {
+          "character_id": "Dr. Quark",
+          "x": 0.5,
+          "y": 0.5,
+          "scale": 1
+        },
+        {
+          "character_id": "Squishy the Robot",
+          "x": 0.5,
+          "y": 0.5,
+          "scale": 1
+        }
+      ],
+      "entrances": [
+        {
+          "character_id": "Captain Zog",
+          "time_sec": 0,
+          "action": "enter"
+        },
+        {
+          "character_id": "Dr. Quark",
+          "time_sec": 0,
+          "action": "enter"
+        },
+        {
+          "character_id": "Squishy the Robot",
+          "time_sec": 0,
+          "action": "enter"
+        }
+      ],
+      "reactions": [],
+      "subtitle_placement": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "scene_id": "5",
+      "stage": [
+        {
+          "character_id": "Captain Zog",
+          "x": 0.5,
+          "y": 0.5,
+          "scale": 1
+        },
+        {
+          "character_id": "Dr. Quark",
+          "x": 0.5,
+          "y": 0.5,
+          "scale": 1
+        },
+        {
+          "character_id": "Squishy the Robot",
+          "x": 0.5,
+          "y": 0.5,
+          "scale": 1
+        }
+      ],
+      "entrances": [
+        {
+          "character_id": "Captain Zog",
+          "time_sec": 0,
+          "action": "enter"
+        },
+        {
+          "character_id": "Dr. Quark",
+          "time_sec": 0,
+          "action": "enter"
+        },
+        {
+          "character_id": "Squishy the Robot",
+          "time_sec": 0,
+          "action": "enter"
+        }
+      ],
+      "reactions": [
+        {
+          "character_id": "Captain Zog",
+          "time_sec": 10,
+          "duration_sec": 5,
+          "reaction": "angry"
+        },
+        {
+          "character_id": "Dr. Quark",
+          "time_sec": 10,
+          "duration_sec": 5,
+          "reaction": "neutral"
+        },
+        {
+          "character_id": "Squishy the Robot",
+          "time_sec": 10,
+          "duration_sec": 5,
+          "reaction": "neutral"
+        }
+      ],
+      "subtitle_placement": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    }
+  ]
+}

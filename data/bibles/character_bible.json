@@ -1,0 +1,18 @@
+{
+  "characters": [
+    {
+      "character_id": "A",
+      "traits": ["curious", "precise"],
+      "catchphrases": ["Let's think this through."],
+      "taboo_topics": [],
+      "voice_id": "voice-default",
+      "avatar_id": "avatar-default",
+      "emotion_map": {
+        "neutral": {"style": "neutral"},
+        "happy": {"style": "warm"},
+        "sad": {"style": "soft"},
+        "angry": {"style": "sharp"}
+      }
+    }
+  ]
+}

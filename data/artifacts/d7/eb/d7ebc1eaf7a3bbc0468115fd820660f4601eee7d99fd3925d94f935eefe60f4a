@@ -1,0 +1,18 @@
+{
+  "required_edits": [
+    "Reduce redundant lines in scene 5.",
+    "Add more dialogue for Captain Zog to express excitement about the discovery."
+  ],
+  "suggested_changes": [
+    "Consider adding a montage sequence to show the team's exploration.",
+    "Introduce a conflict or challenge during the exploration to add tension."
+  ],
+  "duration_targets": {
+    "total_duration": "1200 seconds",
+    "scene_1": "150 seconds",
+    "scene_2": "200 seconds",
+    "scene_3": "180 seconds",
+    "scene_4": "160 seconds",
+    "scene_5": "180 seconds"
+  }
+}

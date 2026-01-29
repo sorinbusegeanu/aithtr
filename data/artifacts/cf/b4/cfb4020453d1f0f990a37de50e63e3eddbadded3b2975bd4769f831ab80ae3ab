@@ -1,0 +1,20 @@
+{
+  "required_edits": [
+    "Reduce redundant lines in scene 4.",
+    "Remove repetitive lines in scene 5."
+  ],
+  "suggested_changes": [
+    "Consider adding a brief exposition at the beginning of each scene to set the stage.",
+    "Introduce a new character or element in scenes 2 and 3 to add depth."
+  ],
+  "duration_targets": {
+    "total": "1 minute",
+    "per_scene": {
+      "1": "1 minute",
+      "2": "1 minute",
+      "3": "1 minute",
+      "4": "1 minute",
+      "5": "1 minute"
+    }
+  }
+}

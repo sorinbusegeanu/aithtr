@@ -1,0 +1,18 @@
+{
+  "required_edits": [
+    "Reduce redundant lines in scene 5.",
+    "Clarify the repetitive nature of Captain Zog's lines in scene 5."
+  ],
+  "suggested_changes": [
+    "Consider adding a subplot involving a character's personal conflict.",
+    "Introduce a new alien species that interacts with the characters."
+  ],
+  "duration_targets": {
+    "total_duration": "120 seconds",
+    "scene_1": "60 seconds",
+    "scene_2": "100 seconds",
+    "scene_3": "80 seconds",
+    "scene_4": "110 seconds",
+    "scene_5": "100 seconds"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "required_edits": [
+    "Reduce repetition in dialogue.",
+    "Add more emotional depth to Captain Zog's lines.",
+    "Increase variety in Dr. Zoidberg's responses."
+  ],
+  "suggested_changes": [
+    "Captain Zog could express curiosity about the alien behavior rather than assuming hostility.",
+    "Dr. Zoidberg could provide more detailed observations about the flora and fauna.",
+    "Introduce a conflict or obstacle that forces the characters to reconsider their initial plan."
+  ],
+  "duration_targets": {
+    "total": "1 minute",
+    "scene_1": "1 minute",
+    "scene_2": "1 minute"
+  }
+}

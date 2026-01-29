@@ -1,9 +1,11 @@
 FROM python:3.11-slim
 
 WORKDIR /app
-COPY . /app
 
-RUN pip install --no-cache-dir mcp
+COPY mcp_servers/assets/requirements.txt /tmp/requirements.txt
+RUN pip install --no-cache-dir -r /tmp/requirements.txt
+
+COPY . /app
 
 ENV ARTIFACT_ROOT=/data/artifacts \
     ASSET_CATALOG_PATH=/data/assets/catalog.json \
@@ -12,4 +14,4 @@ ENV ARTIFACT_ROOT=/data/artifacts \
     MCP_PORT=7101 \
     MCP_PATH=/mcp
 
-CMD ["python", "mcp_servers/assets/mcp_server.py"]
+CMD ["python", "-m", "mcp_servers.assets.mcp_server"]

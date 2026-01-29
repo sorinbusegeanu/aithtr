@@ -1,0 +1,35 @@
+{
+  "premise": "A group of astronauts on a space mission encounter an alien species that has a unique sense of humor, leading to hilarious misunderstandings and adventures.",
+  "beats": [
+    {
+      "label": "Introduction of the crew",
+      "duration_sec": 60
+    },
+    {
+      "label": "First encounter with aliens",
+      "duration_sec": 90
+    },
+    {
+      "label": "Alien misunderstandings",
+      "duration_sec": 120
+    },
+    {
+      "label": "Crew bonding through comedy",
+      "duration_sec": 150
+    },
+    {
+      "label": "Final showdown",
+      "duration_sec": 120
+    }
+  ],
+  "tone": "funny",
+  "cast_constraints": {
+    "required_characters": [
+      "Captain Zog",
+      "Dr. Zoidberg",
+      "Lieutenant Blaster"
+    ],
+    "max_cast_per_scene": 4,
+    "max_scenes": 8
+  }
+}

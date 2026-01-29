@@ -1,0 +1,69 @@
+{
+  "scenes": [
+    {
+      "scene_id": "1",
+      "background_asset_id": "space_background_1",
+      "props": [],
+      "layout_hints": {
+        "subtitle_safe_zone": {
+          "x": 0.1,
+          "y": 0.85,
+          "width": 0.8,
+          "height": 0.1
+        }
+      }
+    },
+    {
+      "scene_id": "2",
+      "background_asset_id": "conference_room",
+      "props": [],
+      "layout_hints": {
+        "subtitle_safe_zone": {
+          "x": 0.1,
+          "y": 0.85,
+          "width": 0.8,
+          "height": 0.1
+        }
+      }
+    },
+    {
+      "scene_id": "3",
+      "background_asset_id": "landing_site",
+      "props": [],
+      "layout_hints": {
+        "subtitle_safe_zone": {
+          "x": 0.1,
+          "y": 0.85,
+          "width": 0.8,
+          "height": 0.1
+        }
+      }
+    },
+    {
+      "scene_id": "4",
+      "background_asset_id": "alien_habitat",
+      "props": [],
+      "layout_hints": {
+        "subtitle_safe_zone": {
+          "x": 0.1,
+          "y": 0.85,
+          "width": 0.8,
+          "height": 0.1
+        }
+      }
+    },
+    {
+      "scene_id": "5",
+      "background_asset_id": "analysis_station",
+      "props": [],
+      "layout_hints": {
+        "subtitle_safe_zone": {
+          "x": 0.1,
+          "y": 0.85,
+          "width": 0.8,
+          "height": 0.1
+        }
+      }
+    }
+  ]
+}

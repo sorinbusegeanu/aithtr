@@ -1,0 +1,479 @@
+{
+  "scenes": [
+    {
+      "scene_id": "1",
+      "setting_prompt": "On a spaceship in deep space.",
+      "characters": [
+        "Captain Zog",
+        "Dr. Zoidberg"
+      ],
+      "lines": [
+        {
+          "line_id": "1",
+          "speaker": "Captain Zog",
+          "text": "Alright team, let's get ready for our first alien encounter.",
+          "emotion": "neutral",
+          "pause_ms_after": 500,
+          "sfx_tag": "space_ship"
+        },
+        {
+          "line_id": "2",
+          "speaker": "Dr. Zoidberg",
+          "text": "I'm sure we'll learn something new today.",
+          "emotion": "neutral",
+          "pause_ms_after": 500,
+          "sfx_tag": "science_fiction"
+        }
+      ]
+    },
+    {
+      "scene_id": "2",
+      "setting_prompt": "A barren planet with strange flora and fauna.",
+      "characters": [
+        "Captain Zog",
+        "Dr. Zoidberg",
+        "Wally Whisker"
+      ],
+      "lines": [
+        {
+          "line_id": "3",
+          "speaker": "Captain Zog",
+          "text": "Look at these plants! They're like nothing I've ever seen before.",
+          "emotion": "happy",
+          "pause_ms_after": 500,
+          "sfx_tag": "alien_plants"
+        },
+        {
+          "line_id": "4",
+          "speaker": "Dr. Zoidberg",
+          "text": "They're probably edible. Let's collect some samples.",
+          "emotion": "neutral",
+          "pause_ms_after": 500,
+          "sfx_tag": "science_fiction"
+        },
+        {
+          "line_id": "5",
+          "speaker": "Wally Whisker",
+          "text": "Wait, what are those creatures over there?",
+          "emotion": "surprised",
+          "pause_ms_after": 500,
+          "sfx_tag": "alien_animals"
+        },
+        {
+          "line_id": "6",
+          "speaker": "Captain Zog",
+          "text": "Oh, they're just friendly aliens. Don't worry.",
+          "emotion": "calm",
+          "pause_ms_after": 500,
+          "sfx_tag": "friendly_sounds"
+        }
+      ]
+    },
+    {
+      "scene_id": "3",
+      "setting_prompt": "Inside a small alien habitat.",
+      "characters": [
+        "Captain Zog",
+        "Dr. Zoidberg",
+        "Wally Whisker"
+      ],
+      "lines": [
+        {
+          "line_id": "7",
+          "speaker": "Dr. Zoidberg",
+          "text": "These aliens have a sense of humor. Look at their jokes!",
+          "emotion": "amused",
+          "pause_ms_after": 500,
+          "sfx_tag": "alien_talk"
+        },
+        {
+          "line_id": "8",
+          "speaker": "Wally Whisker",
+          "text": "Haha, that was a good one! But how do they understand us?",
+          "emotion": "confused",
+          "pause_ms_after": 500,
+          "sfx_tag": "alien_talk"
+        },
+        {
+          "line_id": "9",
+          "speaker": "Captain Zog",
+          "text": "They use vibrations and light patterns. It's like a secret language.",
+          "emotion": "neutral",
+          "pause_ms_after": 500,
+          "sfx_tag": "alien_talk"
+        }
+      ]
+    },
+    {
+      "scene_id": "4",
+      "setting_prompt": "In a training room with the aliens.",
+      "characters": [
+        "Captain Zog",
+        "Dr. Zoidberg",
+        "Wally Whisker"
+      ],
+      "lines": [
+        {
+          "line_id": "10",
+          "speaker": "Dr. Zoidberg",
+          "text": "We need to practice our communication skills. Can you teach us their language?",
+          "emotion": "serious",
+          "pause_ms_after": 500,
+          "sfx_tag": "alien_talk"
+        },
+        {
+          "line_id": "11",
+          "speaker": "Captain Zog",
+          "text": "Sure, but remember, they're not as straightforward as we are.",
+          "emotion": "neutral",
+          "pause_ms_after": 500,
+          "sfx_tag": "alien_talk"
+        },
+        {
+          "line_id": "12",
+          "speaker": "Wally Whisker",
+          "text": "What do you mean?",
+          "emotion": "curious",
+          "pause_ms_after": 500,
+          "sfx_tag": "alien_talk"
+        }
+      ]
+    },
+    {
+      "scene_id": "5",
+      "setting_prompt": "Outside the habitat, exploring the planet.",
+      "characters": [
+        "Captain Zog",
+        "Dr. Zoidberg",
+        "Wally Whisker"
+      ],
+      "lines": [
+        {
+          "line_id": "13",
+          "speaker": "Dr. Zoidberg",
+          "text": "Look at this rock formation! It looks like a funny face.",
+          "emotion": "amused",
+          "pause_ms_after": 500,
+          "sfx_tag": "alien_talk"
+        },
+        {
+          "line_id": "14",
+          "speaker": "Wally Whisker",
+          "text": "Yeah, it's like they're telling jokes with rocks.",
+          "emotion": "confused",
+          "pause_ms_after": 500,
+          "sfx_tag": "alien_talk"
+        },
+        {
+          "line_id": "15",
+          "speaker": "Captain Zog",
+          "text": "That's because they're using their secret language. Let's keep an open mind.",
+          "emotion": "calm",
+          "pause_ms_after": 500,
+          "sfx_tag": "alien_talk"
+        },
+        {
+          "line_id": "auto-4",
+          "speaker": "Captain Zog",
+          "text": "We should keep exploring this and see what happens next.",
+          "emotion": "neutral",
+          "pause_ms_after": 200
+        },
+        {
+          "line_id": "auto-5",
+          "speaker": "Captain Zog",
+          "text": "We should keep exploring this and see what happens next.",
+          "emotion": "neutral",
+          "pause_ms_after": 200
+        },
+        {
+          "line_id": "auto-6",
+          "speaker": "Captain Zog",
+          "text": "We should keep exploring this and see what happens next.",
+          "emotion": "neutral",
+          "pause_ms_after": 200
+        },
+        {
+          "line_id": "auto-7",
+          "speaker": "Captain Zog",
+          "text": "We should keep exploring this and see what happens next.",
+          "emotion": "neutral",
+          "pause_ms_after": 200
+        },
+        {
+          "line_id": "auto-8",
+          "speaker": "Captain Zog",
+          "text": "We should keep exploring this and see what happens next.",
+          "emotion": "neutral",
+          "pause_ms_after": 200
+        },
+        {
+          "line_id": "auto-9",
+          "speaker": "Captain Zog",
+          "text": "We should keep exploring this and see what happens next.",
+          "emotion": "neutral",
+          "pause_ms_after": 200
+        },
+        {
+          "line_id": "auto-10",
+          "speaker": "Captain Zog",
+          "text": "We should keep exploring this and see what happens next.",
+          "emotion": "neutral",
+          "pause_ms_after": 200
+        },
+        {
+          "line_id": "auto-11",
+          "speaker": "Captain Zog",
+          "text": "We should keep exploring this and see what happens next.",
+          "emotion": "neutral",
+          "pause_ms_after": 200
+        },
+        {
+          "line_id": "auto-12",
+          "speaker": "Captain Zog",
+          "text": "We should keep exploring this and see what happens next.",
+          "emotion": "neutral",
+          "pause_ms_after": 200
+        },
+        {
+          "line_id": "auto-13",
+          "speaker": "Captain Zog",
+          "text": "We should keep exploring this and see what happens next.",
+          "emotion": "neutral",
+          "pause_ms_after": 200
+        },
+        {
+          "line_id": "auto-14",
+          "speaker": "Captain Zog",
+          "text": "We should keep exploring this and see what happens next.",
+          "emotion": "neutral",
+          "pause_ms_after": 200
+        },
+        {
+          "line_id": "auto-15",
+          "speaker": "Captain Zog",
+          "text": "We should keep exploring this and see what happens next.",
+          "emotion": "neutral",
+          "pause_ms_after": 200
+        },
+        {
+          "line_id": "auto-16",
+          "speaker": "Captain Zog",
+          "text": "We should keep exploring this and see what happens next.",
+          "emotion": "neutral",
+          "pause_ms_after": 200
+        },
+        {
+          "line_id": "auto-17",
+          "speaker": "Captain Zog",
+          "text": "We should keep exploring this and see what happens next.",
+          "emotion": "neutral",
+          "pause_ms_after": 200
+        },
+        {
+          "line_id": "auto-18",
+          "speaker": "Captain Zog",
+          "text": "We should keep exploring this and see what happens next.",
+          "emotion": "neutral",
+          "pause_ms_after": 200
+        },
+        {
+          "line_id": "auto-19",
+          "speaker": "Captain Zog",
+          "text": "We should keep exploring this and see what happens next.",
+          "emotion": "neutral",
+          "pause_ms_after": 200
+        },
+        {
+          "line_id": "auto-20",
+          "speaker": "Captain Zog",
+          "text": "We should keep exploring this and see what happens next.",
+          "emotion": "neutral",
+          "pause_ms_after": 200
+        },
+        {
+          "line_id": "auto-21",
+          "speaker": "Captain Zog",
+          "text": "We should keep exploring this and see what happens next.",
+          "emotion": "neutral",
+          "pause_ms_after": 200
+        },
+        {
+          "line_id": "auto-22",
+          "speaker": "Captain Zog",
+          "text": "We should keep exploring this and see what happens next.",
+          "emotion": "neutral",
+          "pause_ms_after": 200
+        },
+        {
+          "line_id": "auto-23",
+          "speaker": "Captain Zog",
+          "text": "We should keep exploring this and see what happens next.",
+          "emotion": "neutral",
+          "pause_ms_after": 200
+        },
+        {
+          "line_id": "auto-24",
+          "speaker": "Captain Zog",
+          "text": "We should keep exploring this and see what happens next.",
+          "emotion": "neutral",
+          "pause_ms_after": 200
+        },
+        {
+          "line_id": "auto-25",
+          "speaker": "Captain Zog",
+          "text": "We should keep exploring this and see what happens next.",
+          "emotion": "neutral",
+          "pause_ms_after": 200
+        },
+        {
+          "line_id": "auto-26",
+          "speaker": "Captain Zog",
+          "text": "We should keep exploring this and see what happens next.",
+          "emotion": "neutral",
+          "pause_ms_after": 200
+        },
+        {
+          "line_id": "auto-27",
+          "speaker": "Captain Zog",
+          "text": "We should keep exploring this and see what happens next.",
+          "emotion": "neutral",
+          "pause_ms_after": 200
+        },
+        {
+          "line_id": "auto-28",
+          "speaker": "Captain Zog",
+          "text": "We should keep exploring this and see what happens next.",
+          "emotion": "neutral",
+          "pause_ms_after": 200
+        },
+        {
+          "line_id": "auto-29",
+          "speaker": "Captain Zog",
+          "text": "We should keep exploring this and see what happens next.",
+          "emotion": "neutral",
+          "pause_ms_after": 200
+        },
+        {
+          "line_id": "auto-30",
+          "speaker": "Captain Zog",
+          "text": "We should keep exploring this and see what happens next.",
+          "emotion": "neutral",
+          "pause_ms_after": 200
+        },
+        {
+          "line_id": "auto-31",
+          "speaker": "Captain Zog",
+          "text": "We should keep exploring this and see what happens next.",
+          "emotion": "neutral",
+          "pause_ms_after": 200
+        },
+        {
+          "line_id": "auto-32",
+          "speaker": "Captain Zog",
+          "text": "We should keep exploring this and see what happens next.",
+          "emotion": "neutral",
+          "pause_ms_after": 200
+        },
+        {
+          "line_id": "auto-33",
+          "speaker": "Captain Zog",
+          "text": "We should keep exploring this and see what happens next.",
+          "emotion": "neutral",
+          "pause_ms_after": 200
+        },
+        {
+          "line_id": "auto-34",
+          "speaker": "Captain Zog",
+          "text": "We should keep exploring this and see what happens next.",
+          "emotion": "neutral",
+          "pause_ms_after": 200
+        },
+        {
+          "line_id": "auto-35",
+          "speaker": "Captain Zog",
+          "text": "We should keep exploring this and see what happens next.",
+          "emotion": "neutral",
+          "pause_ms_after": 200
+        },
+        {
+          "line_id": "auto-36",
+          "speaker": "Captain Zog",
+          "text": "We should keep exploring this and see what happens next.",
+          "emotion": "neutral",
+          "pause_ms_after": 200
+        },
+        {
+          "line_id": "auto-37",
+          "speaker": "Captain Zog",
+          "text": "We should keep exploring this and see what happens next.",
+          "emotion": "neutral",
+          "pause_ms_after": 200
+        },
+        {
+          "line_id": "auto-38",
+          "speaker": "Captain Zog",
+          "text": "We should keep exploring this and see what happens next.",
+          "emotion": "neutral",
+          "pause_ms_after": 200
+        },
+        {
+          "line_id": "auto-39",
+          "speaker": "Captain Zog",
+          "text": "We should keep exploring this and see what happens next.",
+          "emotion": "neutral",
+          "pause_ms_after": 200
+        },
+        {
+          "line_id": "auto-40",
+          "speaker": "Captain Zog",
+          "text": "We should keep exploring this and see what happens next.",
+          "emotion": "neutral",
+          "pause_ms_after": 200
+        },
+        {
+          "line_id": "auto-41",
+          "speaker": "Captain Zog",
+          "text": "We should keep exploring this and see what happens next.",
+          "emotion": "neutral",
+          "pause_ms_after": 200
+        },
+        {
+          "line_id": "auto-42",
+          "speaker": "Captain Zog",
+          "text": "We should keep exploring this and see what happens next.",
+          "emotion": "neutral",
+          "pause_ms_after": 200
+        },
+        {
+          "line_id": "auto-43",
+          "speaker": "Captain Zog",
+          "text": "We should keep exploring this and see what happens next.",
+          "emotion": "neutral",
+          "pause_ms_after": 200
+        },
+        {
+          "line_id": "auto-44",
+          "speaker": "Captain Zog",
+          "text": "We should keep exploring this and see what happens next.",
+          "emotion": "neutral",
+          "pause_ms_after": 200
+        },
+        {
+          "line_id": "auto-45",
+          "speaker": "Captain Zog",
+          "text": "We should keep exploring this and see what happens next.",
+          "emotion": "neutral",
+          "pause_ms_after": 200
+        },
+        {
+          "line_id": "auto-46",
+          "speaker": "Captain Zog",
+          "text": "We should keep exploring this and see what happens next.",
+          "emotion": "neutral",
+          "pause_ms_after": 200
+        }
+      ]
+    }
+  ]
+}

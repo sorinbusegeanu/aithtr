@@ -4,13 +4,24 @@ from typing import Any, Dict
 from agents.common import LLMClient
 
 
+PROMPT = """
+You are the QC Agent. Produce qc_report.json strictly as JSON.
+
+Input:
+{input_json}
+
+Requirements:
+- Return JSON object with keys: duration_sec, audio, video, subtitles, errors.
+- audio: {{clipping: bool, silence_gaps:[{{start_sec,end_sec}}]}}
+- video: {{black_frames:[{{start_sec,end_sec}}], fps:number}}
+- subtitles: {{missing: bool}}
+- errors: string[]
+- No extra keys.
+""".strip()
+
+
 def run(input_data: Dict[str, Any], llm: LLMClient | None = None) -> Dict[str, Any]:
     """Pure function: input -> QC report."""
     llm = llm or LLMClient()
-    return {
-        "duration_sec": input_data.get("duration_sec", 0.0),
-        "audio": input_data.get("audio", {"clipping": False, "silence_gaps": []}),
-        "video": input_data.get("video", {"black_frames": [], "fps": 0}),
-        "subtitles": input_data.get("subtitles", {"missing": False}),
-        "errors": input_data.get("errors", []),
-    }
+    prompt = PROMPT.format(input_json=input_data)
+    return llm.complete_json(prompt)

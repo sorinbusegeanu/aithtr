@@ -1,9 +1,11 @@
 FROM python:3.11-slim
 
 WORKDIR /app
-COPY . /app
 
-RUN pip install --no-cache-dir mcp
+COPY mcp_servers/memory/requirements.txt /tmp/requirements.txt
+RUN pip install --no-cache-dir -r /tmp/requirements.txt
+
+COPY . /app
 
 ENV MEMORY_DB_PATH=/data/sqlite/memory.db \
     MCP_TRANSPORT=http \
@@ -11,4 +13,4 @@ ENV MEMORY_DB_PATH=/data/sqlite/memory.db \
     MCP_PORT=7102 \
     MCP_PATH=/mcp
 
-CMD ["python", "mcp_servers/memory/mcp_server.py"]
+CMD ["python", "-m", "mcp_servers.memory.mcp_server"]

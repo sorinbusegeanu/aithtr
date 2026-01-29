@@ -1,0 +1,19 @@
+{
+  "required_edits": [
+    "Reduce repetition in Captain Zog's lines.",
+    "Add more dynamic interactions between characters.",
+    "Increase the emotional depth of the narrator's line."
+  ],
+  "suggested_changes": [
+    "Consider adding a brief scene where the team discusses their strategy before heading to the planet.",
+    "Introduce a new character who can provide comic relief or unexpected insights.",
+    "Develop Squishy the Robot's role more by giving him specific tasks or reactions."
+  ],
+  "duration_targets": {
+    "total": "10 minutes",
+    "scene_1": "2 minutes",
+    "scene_2": "3 minutes",
+    "scene_3": "2 minutes",
+    "scene_4": "3 minutes"
+  }
+}

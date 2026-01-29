@@ -1,10 +1,12 @@
 FROM python:3.11-slim
 
 WORKDIR /app
-COPY . /app
 
+COPY mcp_servers/qc/requirements.txt /tmp/requirements.txt
 RUN apt-get update && apt-get install -y ffmpeg && rm -rf /var/lib/apt/lists/* \
-    && pip install --no-cache-dir mcp
+    && pip install --no-cache-dir -r /tmp/requirements.txt
+
+COPY . /app
 
 ENV ARTIFACT_ROOT=/data/artifacts \
     FFMPEG_BIN=ffmpeg \
@@ -14,4 +16,4 @@ ENV ARTIFACT_ROOT=/data/artifacts \
     MCP_PORT=7106 \
     MCP_PATH=/mcp
 
-CMD ["python", "mcp_servers/qc/mcp_server.py"]
+CMD ["python", "-m", "mcp_servers.qc.mcp_server"]

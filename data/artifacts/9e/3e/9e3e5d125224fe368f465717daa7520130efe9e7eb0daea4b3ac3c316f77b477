@@ -1,0 +1,55 @@
+{
+  "cast_plan": {
+    "roles": [
+      {
+        "role": "Captain Zog",
+        "character_id": "A",
+        "voice_id": "voice-default",
+        "avatar_id": "avatar-default",
+        "emotion_map": {
+          "neutral": {
+            "style": "neutral"
+          },
+          "happy": {
+            "style": "warm",
+            "rate": 1.2,
+            "pitch": -1
+          },
+          "sad": {
+            "style": "soft",
+            "energy": 0.8
+          },
+          "angry": {
+            "style": "sharp",
+            "energy": 1.5
+          }
+        }
+      },
+      {
+        "role": "Dr. Zoidberg",
+        "character_id": "B",
+        "voice_id": "voice-default",
+        "avatar_id": "avatar-default",
+        "emotion_map": {
+          "neutral": {
+            "style": "neutral"
+          },
+          "happy": {
+            "style": "warm",
+            "rate": 1.2,
+            "pitch": -1
+          },
+          "sad": {
+            "style": "soft",
+            "energy": 0.8
+          },
+          "angry": {
+            "style": "sharp",
+            "energy": 1.5
+          }
+        }
+      }
+    ]
+  },
+  "cast_bible_update": {}
+}

@@ -1,0 +1,14 @@
+{
+  "required_edits": [
+    "Reduce redundant lines in scene 5.",
+    "Clarify the purpose of Captain Zog's repeated statements."
+  ],
+  "suggested_changes": [
+    "Consider removing some of the auto-generated lines in scene 5 to streamline the action.",
+    "Add a brief summary or explanation for Captain Zog's repetitive statements."
+  ],
+  "duration_targets": {
+    "total_scene_5": "Reduce by 20 seconds",
+    "total_screenplay": "Maintain current duration"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "required_edits": [
+    "Reduce repetition in Captain Zog's lines.",
+    "Add more emotional depth to Dr. Zoidberg's responses.",
+    "Increase dialogue between Captain Zog and Wally Whisker."
+  ],
+  "suggested_changes": [
+    "Captain Zog could express curiosity about the planet's flora and fauna.",
+    "Dr. Zoidberg could provide more detailed descriptions of the alien life forms.",
+    "Wally Whisker could have a more assertive tone when questioning the aliens."
+  ],
+  "duration_targets": {
+    "total": "1 minute",
+    "scene_1": "1 minute",
+    "scene_2": "2 minutes"
+  }
+}

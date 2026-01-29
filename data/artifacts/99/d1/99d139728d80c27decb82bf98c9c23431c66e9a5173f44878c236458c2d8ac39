@@ -1,0 +1,31 @@
+{
+  "premise": "In a far-off galaxy, a group of space explorers from different planets team up to save their universe from an alien invasion.",
+  "beats": [
+    {
+      "label": "Explorers receive distress signal",
+      "duration_sec": 60
+    },
+    {
+      "label": "Arrive at the site of the invasion",
+      "duration_sec": 90
+    },
+    {
+      "label": "Discover the invaders' plan",
+      "duration_sec": 120
+    },
+    {
+      "label": "Plan and execute the counterattack",
+      "duration_sec": 150
+    }
+  ],
+  "tone": "funny",
+  "cast_constraints": {
+    "required_characters": [
+      "Captain Zog",
+      "Dr. Quark",
+      "Squishy the Robot"
+    ],
+    "max_cast_per_scene": 3,
+    "max_scenes": 5
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "series_title": "AI Puppet Theatre",
+  "tone": "light, character-driven",
+  "style_guard": {
+    "max_line_length_chars": 200,
+    "max_scenes": 5,
+    "forbidden_content": [
+      "graphic violence",
+      "hate speech",
+      "explicit sexual content",
+      "self-harm"
+    ]
+  },
+  "taboo_topics": [
+    "real person defamation",
+    "political persuasion",
+    "medical advice"
+  ]
+}

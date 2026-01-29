@@ -1,0 +1,17 @@
+{
+  "scenes": [
+    {
+      "scene_id": "1",
+      "background_asset_id": "spaceship_cockpit",
+      "props": [],
+      "layout_hints": {
+        "subtitle_safe_zone": {
+          "x": 0.1,
+          "y": 0.85,
+          "width": 0.8,
+          "height": 0.1
+        }
+      }
+    }
+  ]
+}

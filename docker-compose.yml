@@ -1,54 +1,8 @@
-version: "3.9"
-
 services:
-  orchestrator:
-    build:
-      context: .
-      dockerfile: orchestrator/Dockerfile
-    volumes:
-      - ./data:/data
-    environment:
-      ARTIFACT_ROOT: /data/artifacts
-      MEMORY_DB_PATH: /data/sqlite/memory.db
-      ASSET_CATALOG_PATH: /data/assets/catalog.json
-    command: ["python", "-m", "orchestrator.cli", "--help"]
-
-  mcp-assets:
-    build:
-      context: .
-      dockerfile: mcp_servers/assets/Dockerfile
-    volumes:
-      - ./data:/data
+  vllm:
+    image: vllm/vllm-openai:latest
     ports:
-      - "7101:7101"
-    healthcheck:
-      test: ["CMD-SHELL", "python -c \"import socket; s=socket.create_connection(('localhost',7101),2); s.close()\""]
-      interval: 10s
-      timeout: 3s
-      retries: 5
-
-  mcp-memory:
-    build:
-      context: .
-      dockerfile: mcp_servers/memory/Dockerfile
-    volumes:
-      - ./data:/data
-    ports:
-      - "7102:7102"
-    healthcheck:
-      test: ["CMD-SHELL", "python -c \"import socket; s=socket.create_connection(('localhost',7102),2); s.close()\""]
-      interval: 10s
-      timeout: 3s
-      retries: 5
-
-  mcp-tts:
-    build:
-      context: .
-      dockerfile: mcp_servers/tts/Dockerfile
-    volumes:
-      - ./data:/data
-    ports:
-      - "7103:7103"
+      - "8000:8000"
     deploy:
       resources:
         reservations:
@@ -58,8 +12,88 @@ services:
               capabilities: ["gpu"]
     environment:
       NVIDIA_VISIBLE_DEVICES: all
+    command:
+      - "--model"
+      - "Qwen/Qwen2.5-3B-Instruct"
+      - "--host"
+      - "0.0.0.0"
+      - "--port"
+      - "8000"
+      - "--max-model-len"
+      - "32768"
+      - "--gpu-memory-utilization"
+      - "0.8"
     healthcheck:
-      test: ["CMD-SHELL", "python -c \"import socket; s=socket.create_connection(('localhost',7103),2); s.close()\""]
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8000/v1/models >/dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 300s
+
+  orchestrator:
+    build:
+      context: .
+      dockerfile: orchestrator/Dockerfile
+    depends_on:
+      vllm:
+        condition: service_healthy
+      mcp-qwen-tts:
+        condition: service_healthy
+    volumes:
+      - ./data:/data
+    environment:
+      ARTIFACT_ROOT: /data/artifacts
+      MEMORY_DB_PATH: /data/sqlite/memory.db
+      ASSET_CATALOG_PATH: /data/assets/catalog.json
+      QWEN_TTS_URL: http://mcp-qwen-tts:7203/mcp
+      VLLM_BASE_URL: http://vllm:8000/v1
+      LLM_MAX_TOKENS: "4096"
+      TOOL_RETRIES: "5"
+      LLM_TIMEOUT_SEC: "180"
+    command: ["python", "-m", "orchestrator.cli", "--help"]
+
+  mcp-assets:
+    build:
+      context: .
+      dockerfile: mcp_servers/assets/Dockerfile
+    volumes:
+      - ./data:/data
+    environment:
+      MCP_TRANSPORT: "stdio"
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"print('ok')\""]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  mcp-memory:
+    build:
+      context: .
+      dockerfile: mcp_servers/memory/Dockerfile
+    volumes:
+      - ./data:/data
+    environment:
+      MCP_TRANSPORT: "stdio"
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"print('ok')\""]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  mcp-qwen-tts:
+    build:
+      context: .
+      dockerfile: mcp_servers/qwen_tts/Dockerfile
+    volumes:
+      - ./data:/data
+    ports:
+      - "7203:7203"
+    environment:
+      QWEN_TTS_DEVICE: cpu
+      CUDA_VISIBLE_DEVICES: ""
+      QWEN_TTS_DTYPE: bfloat16
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import socket; s=socket.create_connection(('localhost',7203),2); s.close()\""]
       interval: 10s
       timeout: 3s
       retries: 5
@@ -70,22 +104,13 @@ services:
       dockerfile: mcp_servers/lipsync/Dockerfile
     volumes:
       - ./data:/data
-    ports:
-      - "7104:7104"
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: all
-              capabilities: ["gpu"]
     environment:
-      NVIDIA_VISIBLE_DEVICES: all
+      MCP_TRANSPORT: "stdio"
     healthcheck:
-      test: ["CMD-SHELL", "python -c \"import socket; s=socket.create_connection(('localhost',7104),2); s.close()\""]
-      interval: 10s
-      timeout: 3s
-      retries: 5
+      test: ["CMD-SHELL", "python -c \"print('ok')\""]
+      interval: 30s
+      timeout: 5s
+      retries: 3
 
   mcp-render:
     build:
@@ -93,13 +118,13 @@ services:
       dockerfile: mcp_servers/render/Dockerfile
     volumes:
       - ./data:/data
-    ports:
-      - "7105:7105"
+    environment:
+      MCP_TRANSPORT: "stdio"
     healthcheck:
-      test: ["CMD-SHELL", "python -c \"import socket; s=socket.create_connection(('localhost',7105),2); s.close()\""]
-      interval: 10s
-      timeout: 3s
-      retries: 5
+      test: ["CMD-SHELL", "python -c \"print('ok')\""]
+      interval: 30s
+      timeout: 5s
+      retries: 3
 
   mcp-qc:
     build:
@@ -107,10 +132,10 @@ services:
       dockerfile: mcp_servers/qc/Dockerfile
     volumes:
       - ./data:/data
-    ports:
-      - "7106:7106"
+    environment:
+      MCP_TRANSPORT: "stdio"
     healthcheck:
-      test: ["CMD-SHELL", "python -c \"import socket; s=socket.create_connection(('localhost',7106),2); s.close()\""]
-      interval: 10s
-      timeout: 3s
-      retries: 5
+      test: ["CMD-SHELL", "python -c \"print('ok')\""]
+      interval: 30s
+      timeout: 5s
+      retries: 3

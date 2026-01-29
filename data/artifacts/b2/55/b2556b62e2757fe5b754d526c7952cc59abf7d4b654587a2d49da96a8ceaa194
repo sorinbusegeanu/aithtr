@@ -1,0 +1,69 @@
+{
+  "scenes": [
+    {
+      "scene_id": "1",
+      "background_asset_id": "starlit_expanse",
+      "props": [],
+      "layout_hints": {
+        "subtitle_safe_zone": {
+          "x": 0,
+          "y": 0,
+          "width": 1,
+          "height": 0.2
+        }
+      }
+    },
+    {
+      "scene_id": "2",
+      "background_asset_id": "space_station",
+      "props": [],
+      "layout_hints": {
+        "subtitle_safe_zone": {
+          "x": 0,
+          "y": 0,
+          "width": 1,
+          "height": 0.2
+        }
+      }
+    },
+    {
+      "scene_id": "3",
+      "background_asset_id": "ominous_planet",
+      "props": [],
+      "layout_hints": {
+        "subtitle_safe_zone": {
+          "x": 0,
+          "y": 0,
+          "width": 1,
+          "height": 0.2
+        }
+      }
+    },
+    {
+      "scene_id": "4",
+      "background_asset_id": "alien_base",
+      "props": [],
+      "layout_hints": {
+        "subtitle_safe_zone": {
+          "x": 0,
+          "y": 0,
+          "width": 1,
+          "height": 0.2
+        }
+      }
+    },
+    {
+      "scene_id": "5",
+      "background_asset_id": "battle_scene",
+      "props": [],
+      "layout_hints": {
+        "subtitle_safe_zone": {
+          "x": 0,
+          "y": 0,
+          "width": 1,
+          "height": 0.2
+        }
+      }
+    }
+  ]
+}

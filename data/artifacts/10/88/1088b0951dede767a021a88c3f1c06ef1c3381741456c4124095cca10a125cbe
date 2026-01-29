@@ -1,0 +1,79 @@
+{
+  "scenes": [
+    {
+      "scene_id": "1",
+      "background_asset_id": "space_background",
+      "props": [],
+      "layout_hints": {
+        "subtitle_safe_zone": {
+          "x": 0.1,
+          "y": 0.85,
+          "width": 0.8,
+          "height": 0.1
+        }
+      }
+    },
+    {
+      "scene_id": "2",
+      "background_asset_id": "barren_planet_background",
+      "props": [
+        "strange_flora",
+        "strange_fauna"
+      ],
+      "layout_hints": {
+        "subtitle_safe_zone": {
+          "x": 0.1,
+          "y": 0.85,
+          "width": 0.8,
+          "height": 0.1
+        }
+      }
+    },
+    {
+      "scene_id": "3",
+      "background_asset_id": "alien_habitat_background",
+      "props": [
+        "alien_habitat"
+      ],
+      "layout_hints": {
+        "subtitle_safe_zone": {
+          "x": 0.1,
+          "y": 0.85,
+          "width": 0.8,
+          "height": 0.1
+        }
+      }
+    },
+    {
+      "scene_id": "4",
+      "background_asset_id": "training_room_background",
+      "props": [
+        "training_table"
+      ],
+      "layout_hints": {
+        "subtitle_safe_zone": {
+          "x": 0.1,
+          "y": 0.85,
+          "width": 0.8,
+          "height": 0.1
+        }
+      }
+    },
+    {
+      "scene_id": "5",
+      "background_asset_id": "exploration_background",
+      "props": [
+        "rock_formation",
+        "alien_jokes"
+      ],
+      "layout_hints": {
+        "subtitle_safe_zone": {
+          "x": 0.1,
+          "y": 0.85,
+          "width": 0.8,
+          "height": 0.1
+        }
+      }
+    }
+  ]
+}

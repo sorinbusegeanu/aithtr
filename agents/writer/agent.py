@@ -4,22 +4,38 @@ from typing import Any, Dict
 from agents.common import LLMClient
 
 
+PROMPT = """
+You are the Writer. Produce screenplay_draft.json strictly as JSON.
+
+Input:
+{input_json}
+
+Style guard (must obey):
+- max_line_length_chars: {max_line_length}
+- max_scenes: {max_scenes}
+- forbidden_content: {forbidden_content}
+- minimum_total_words: {min_words}
+
+Requirements:
+- Return JSON object: {{scenes: [...]}}.
+- Each scene has: scene_id, setting_prompt, characters[], lines[].
+- Each line: line_id, speaker, text, emotion, pause_ms_after, optional sfx_tag.
+- Keep dialogue turn-based and concise.
+- Target duration (seconds): {target_duration_sec}. Ensure the total dialogue roughly matches this duration.
+- No extra keys.
+""".strip()
+
+
 def run(input_data: Dict[str, Any], llm: LLMClient | None = None) -> Dict[str, Any]:
     """Pure function: input -> screenplay draft."""
     llm = llm or LLMClient()
-    # TODO: replace with real LLM prompt. Deterministic config set in LLMClient.
-    scene = {
-        "scene_id": "scene-1",
-        "setting_prompt": "A simple stage.",
-        "characters": input_data.get("characters", ["A", "B"]),
-        "lines": [
-            {
-                "line_id": "line-1",
-                "speaker": "A",
-                "text": "Hello.",
-                "emotion": "neutral",
-                "pause_ms_after": 200,
-            }
-        ],
-    }
-    return {"scenes": [scene]}
+    style_guard = (input_data.get("series_bible") or {}).get("style_guard", {})
+    prompt = PROMPT.format(
+        input_json=input_data,
+        max_line_length=style_guard.get("max_line_length_chars", ""),
+        max_scenes=style_guard.get("max_scenes", ""),
+        forbidden_content=style_guard.get("forbidden_content", []),
+        target_duration_sec=input_data.get("target_duration_sec", ""),
+        min_words=int(max((input_data.get("target_duration_sec") or 0) * 2.0, 0)),
+    )
+    return llm.complete_json(prompt)

@@ -1,5 +1,5 @@
 """
-FFmpeg timeline renderer.
+FFmpeg timeline renderer with optional ASR subtitle burn-in.
 """
 import json
 import math
@@ -22,6 +22,12 @@ class RenderSettings:
 class RenderService:
     def __init__(self, artifact_root: Optional[str] = None) -> None:
         self.store = ArtifactStore(root=artifact_root)
+        self.subtitles_mode = os.getenv("SUBTITLES_MODE", "off")
+        self.subtitles_lang = os.getenv("SUBTITLES_LANG", "en")
+        self.subtitles_style = os.getenv("SUBTITLES_STYLE", "")
+        self.asr_model = None
+        if self.subtitles_mode == "asr":
+            self.asr_model = _load_asr_model()
 
     def render_preview(self, timeline_uri: str) -> Dict[str, Any]:
         return self._render(timeline_uri=timeline_uri, preset="preview")
@@ -45,9 +51,17 @@ class RenderService:
             if not scene_outputs:
                 raise ValueError("timeline has no scenes")
 
-            out_path = os.path.join(tmpdir, "episode.mp4")
-            self._concat_scenes(scene_outputs, out_path)
-            with open(out_path, "rb") as f:
+            base_video = os.path.join(tmpdir, "episode_base.mp4")
+            self._concat_scenes(scene_outputs, base_video)
+
+            final_video = base_video
+            if self.subtitles_mode == "asr" and self.asr_model is not None:
+                ass_path = os.path.join(tmpdir, "subtitles.ass")
+                _generate_ass_from_asr(self.asr_model, base_video, ass_path, lang=self.subtitles_lang, style=self.subtitles_style)
+                final_video = os.path.join(tmpdir, "episode_subtitled.mp4")
+                _burn_subtitles(base_video, ass_path, final_video)
+
+            with open(final_video, "rb") as f:
                 data = f.read()
 
         artifact_id = self.store.put(data=data, content_type="video/mp4", tags=["render", preset])
@@ -69,7 +83,6 @@ class RenderService:
         bg_layer = background[0]
 
         inputs: List[str] = []
-        input_kinds: List[str] = []
         filters: List[str] = []
 
         bg_path = self._resolve(bg_layer["asset_id"])
@@ -78,7 +91,6 @@ class RenderService:
             inputs += ["-loop", "1", "-t", _fmt_time(duration), "-i", bg_path]
         else:
             inputs += ["-i", bg_path]
-        input_kinds.append("bg")
 
         overlay_layers = [l for l in layers if l.get("type") in {"actor", "props"}]
         subtitle_layers = [l for l in layers if l.get("type") == "caption"]
@@ -89,14 +101,11 @@ class RenderService:
                 inputs += ["-loop", "1", "-t", _fmt_time(duration), "-i", asset_path]
             else:
                 inputs += ["-i", asset_path]
-            input_kinds.append("overlay")
 
         for layer in audio:
             asset_path = self._resolve(layer["asset_id"])
             inputs += ["-i", asset_path]
-            input_kinds.append("audio")
 
-        # Base background
         filters.append(
             f"[0:v]scale={settings.width}:{settings.height}:force_original_aspect_ratio=decrease,"
             f"pad={settings.width}:{settings.height}:(ow-iw)/2:(oh-ih)/2,"
@@ -118,7 +127,8 @@ class RenderService:
             scale = float(layer.get("scale", 1.0))
 
             filters.append(
-                f"[{video_input_index}:v]trim=0:{_fmt_time(duration)},setpts=PTS-STARTPTS,"
+                f"[{video_input_index}:v]trim={_fmt_time(local_start)}:{_fmt_time(local_end)},"
+                "setpts=PTS-STARTPTS,"
                 f"scale=iw*{scale}:ih*{scale}:flags=bicubic,format=rgba[ov{video_input_index}]"
             )
             filters.append(
@@ -209,6 +219,82 @@ class RenderService:
             width = int(os.getenv("RENDER_PREVIEW_WIDTH", str(width // 2)))
             height = int(os.getenv("RENDER_PREVIEW_HEIGHT", str(height // 2)))
         return RenderSettings(width=width, height=height, fps=fps)
+
+
+def _load_asr_model():
+    try:
+        from faster_whisper import WhisperModel
+    except Exception:
+        return None
+    model_name = os.getenv("WHISPER_MODEL", "small")
+    device = os.getenv("WHISPER_DEVICE", "cpu")
+    compute_type = os.getenv("WHISPER_COMPUTE_TYPE", "int8")
+    return WhisperModel(model_name, device=device, compute_type=compute_type)
+
+
+def _generate_ass_from_asr(model, video_path: str, ass_path: str, lang: str, style: str) -> None:
+    # Extract audio to wav for ASR
+    ffmpeg_bin = os.getenv("FFMPEG_BIN", "ffmpeg")
+    with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp:
+        wav_path = tmp.name
+    subprocess.run(
+        [ffmpeg_bin, "-y", "-i", video_path, "-vn", "-ac", "1", "-ar", "16000", wav_path],
+        check=True,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
+
+    segments, _info = model.transcribe(wav_path, language=lang)
+    _write_ass(ass_path, list(segments), style=style)
+
+
+def _write_ass(path: str, segments: List[Any], style: str = "") -> None:
+    header = """[Script Info]
+ScriptType: v4.00+
+PlayResX: 1280
+PlayResY: 720
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,Arial,42,&H00FFFFFF,&H000000FF,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,0,2,40,40,40,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+"""
+    if style:
+        header = header.replace("Style: Default,Arial,42", f"Style: Default,{style}")
+
+    def fmt_time(t: float) -> str:
+        h = int(t // 3600)
+        m = int((t % 3600) // 60)
+        s = t % 60
+        return f"{h:d}:{m:02d}:{s:05.2f}"
+
+    lines = [header]
+    for seg in segments:
+        start = fmt_time(seg.start)
+        end = fmt_time(seg.end)
+        text = seg.text.strip().replace("\n", " ")
+        lines.append(f"Dialogue: 0,{start},{end},Default,,0,0,0,,{text}")
+
+    with open(path, "w", encoding="utf-8") as f:
+        f.write("\n".join(lines))
+
+
+def _burn_subtitles(video_path: str, ass_path: str, out_path: str) -> None:
+    ffmpeg_bin = os.getenv("FFMPEG_BIN", "ffmpeg")
+    cmd = [
+        ffmpeg_bin,
+        "-y",
+        "-i",
+        video_path,
+        "-vf",
+        f"subtitles='{ass_path}'",
+        "-c:a",
+        "copy",
+        out_path,
+    ]
+    subprocess.run(cmd, check=True)
 
 
 def _is_image(path: str) -> bool:

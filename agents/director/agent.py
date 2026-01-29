@@ -4,18 +4,25 @@ from typing import Any, Dict
 from agents.common import LLMClient
 
 
+PROMPT = """
+You are the Director. Produce scene_plan.json strictly as JSON.
+
+Input:
+{input_json}
+
+Requirements:
+- Return JSON object: {{scenes:[...]}}
+- Each scene: scene_id, stage[], entrances[], reactions[], subtitle_placement.
+- stage items: {{character_id,x,y,scale}}.
+- entrances: {{character_id,time_sec,action(enter|exit)}}.
+- reactions: {{character_id,time_sec,duration_sec,reaction}}.
+- subtitle_placement: {{x,y}} values 0-1.
+- No extra keys.
+""".strip()
+
+
 def run(input_data: Dict[str, Any], llm: LLMClient | None = None) -> Dict[str, Any]:
     """Pure function: input -> scene plan."""
     llm = llm or LLMClient()
-    scenes = []
-    for scene in input_data.get("scenes", []):
-        scenes.append(
-            {
-                "scene_id": scene.get("scene_id", "scene-1"),
-                "stage": scene.get("stage", []),
-                "entrances": scene.get("entrances", []),
-                "reactions": scene.get("reactions", []),
-                "subtitle_placement": scene.get("subtitle_placement", {"x": 0.1, "y": 0.85}),
-            }
-        )
-    return {"scenes": scenes}
+    prompt = PROMPT.format(input_json=input_data)
+    return llm.complete_json(prompt)
