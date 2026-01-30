@@ -1,6 +1,7 @@
 services:
   vllm:
     image: vllm/vllm-openai:latest
+    gpus: all
     ports:
       - "8000:8000"
     deploy:
@@ -84,14 +85,21 @@ services:
     build:
       context: .
       dockerfile: mcp_servers/qwen_tts/Dockerfile
+    gpus: all
     volumes:
       - ./data:/data
     ports:
       - "7203:7203"
     environment:
-      QWEN_TTS_DEVICE: cpu
-      CUDA_VISIBLE_DEVICES: ""
+      QWEN_TTS_DEVICE: cuda
       QWEN_TTS_DTYPE: bfloat16
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: ["gpu"]
     healthcheck:
       test: ["CMD-SHELL", "python -c \"import socket; s=socket.create_connection(('localhost',7203),2); s.close()\""]
       interval: 10s

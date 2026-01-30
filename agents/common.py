@@ -73,6 +73,10 @@ class LLMClient:
                 salvage = _extract_json(content)
                 if salvage is not None:
                     return salvage
+                # Ask model to repair the invalid JSON
+                repaired = self._repair_json(content)
+                if repaired is not None:
+                    return repaired
                 # Retry with stronger instruction
                 prompt = (
                     "Return valid JSON only. Do not include any other text.\n\n"
@@ -85,6 +89,45 @@ class LLMClient:
                 data = json.dumps(payload).encode("utf-8")
                 req = urllib.request.Request(url, data=data, headers=headers)
         raise last_err or RuntimeError("Failed to parse JSON from LLM")
+
+    def _repair_json(self, bad_json: str) -> Optional[Dict[str, Any]]:
+        system_msg = "You fix invalid JSON. Return only valid JSON. No prose."
+        prompt = (
+            "Fix the JSON below. Return valid JSON only.\n\n"
+            "<json>\n"
+            + bad_json
+            + "\n</json>"
+        )
+        url = self.config.base_url.rstrip("/") + "/chat/completions"
+        headers = {"Content-Type": "application/json"}
+        if self.config.api_key:
+            headers["Authorization"] = f"Bearer {self.config.api_key}"
+        payload: Dict[str, Any] = {
+            "model": self.config.model,
+            "messages": [
+                {"role": "system", "content": system_msg},
+                {"role": "user", "content": prompt},
+            ],
+            "temperature": 0.0,
+            "max_tokens": self.config.max_tokens,
+        }
+        if self.config.seed is not None:
+            payload["seed"] = self.config.seed
+        if self.config.json_only:
+            payload["response_format"] = {"type": "json_object"}
+        data = json.dumps(payload).encode("utf-8")
+        req = urllib.request.Request(url, data=data, headers=headers)
+        try:
+            with urllib.request.urlopen(req, timeout=self.config.timeout_sec) as resp:
+                raw = resp.read().decode("utf-8")
+            parsed = json.loads(raw)
+            choices = parsed.get("choices", [])
+            if not choices:
+                return None
+            content = choices[0].get("message", {}).get("content", "")
+            return ensure_json_only(content)
+        except Exception:
+            return None
 
 
 def ensure_json_only(text: str) -> Dict[str, Any]:

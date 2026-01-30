@@ -19,6 +19,7 @@ class Handler(BaseHTTPRequestHandler):
 
         length = int(self.headers.get("Content-Length", "0"))
         body = self.rfile.read(length).decode("utf-8")
+        payload: Any = None
         try:
             payload = json.loads(body)
             result = handle_rpc(payload)

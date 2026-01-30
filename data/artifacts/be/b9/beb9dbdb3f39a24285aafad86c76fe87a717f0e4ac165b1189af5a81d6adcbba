@@ -1,0 +1,90 @@
+{
+  "scenes": [
+    {
+      "scene_id": "1",
+      "stage": [
+        {
+          "character_id": "Captain Zog",
+          "x": 0.5,
+          "y": 0.5,
+          "scale": 1
+        },
+        {
+          "character_id": "Dr. Zoidberg",
+          "x": 0.5,
+          "y": 0.3,
+          "scale": 1
+        }
+      ],
+      "entrances": [],
+      "reactions": [],
+      "subtitle_placement": []
+    },
+    {
+      "scene_id": "2",
+      "stage": [
+        {
+          "character_id": "Captain Zog",
+          "x": 0.5,
+          "y": 0.5,
+          "scale": 1
+        },
+        {
+          "character_id": "Dr. Zoidberg",
+          "x": 0.5,
+          "y": 0.3,
+          "scale": 1
+        },
+        {
+          "character_id": "Wally Whisker",
+          "x": 0.5,
+          "y": 0.1,
+          "scale": 1
+        }
+      ],
+      "entrances": [
+        {
+          "character_id": "Captain Zog",
+          "time_sec": 0,
+          "action": "enter"
+        },
+        {
+          "character_id": "Dr. Zoidberg",
+          "time_sec": 0,
+          "action": "enter"
+        },
+        {
+          "character_id": "Wally Whisker",
+          "time_sec": 0,
+          "action": "enter"
+        }
+      ],
+      "reactions": [
+        {
+          "character_id": "Captain Zog",
+          "time_sec": 0,
+          "duration_sec": 0.5,
+          "reaction": "neutral"
+        },
+        {
+          "character_id": "Dr. Zoidberg",
+          "time_sec": 0,
+          "duration_sec": 0.5,
+          "reaction": "neutral"
+        },
+        {
+          "character_id": "Wally Whisker",
+          "time_sec": 0,
+          "duration_sec": 0.5,
+          "reaction": "neutral"
+        }
+      ],
+      "subtitle_placement": [
+        {
+          "x": 0.5,
+          "y": 0.5
+        }
+      ]
+    }
+  ]
+}

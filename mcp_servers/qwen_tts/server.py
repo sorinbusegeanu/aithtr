@@ -17,6 +17,17 @@ from mcp_servers.assets.artifact_store import ArtifactStore
 
 DEFAULT_MODEL = "Qwen/Qwen3-TTS-12Hz-1.7B-CustomVoice"
 DEFAULT_AUDIO_SR = 48000
+DEFAULT_SPEAKERS = [
+    "aiden",
+    "dylan",
+    "eric",
+    "ono_anna",
+    "ryan",
+    "serena",
+    "sohee",
+    "uncle_fu",
+    "vivian",
+]
 
 EMOTION_INSTRUCT = {
     "sad": "Sad, quiet, low energy",
@@ -159,6 +170,11 @@ class QwenTTSService:
     def _ensure_model(self) -> None:
         if self.model is None:
             self.model = self._load_model()
+            print(
+                f"[qwen-tts] device={self.config.device} dtype={self.config.dtype} "
+                f"cuda_available={torch.cuda.is_available()}",
+                flush=True,
+            )
             self.speakers = self._load_speakers()
             self.voice_map = VoiceMap(os.getenv("VOICE_MAP_PATH", "/data/tts/voice_map.json"), self.speakers)
 
@@ -170,10 +186,21 @@ class QwenTTSService:
             return list(self.model.speakers)
         if hasattr(self.model, "get_speakers"):
             return list(self.model.get_speakers())
-        return ["speaker_0"]
+        return list(DEFAULT_SPEAKERS)
 
     def _synthesize_audio(self, text: str, speaker: str, instruct: str) -> Tuple[np.ndarray, int]:
-        if hasattr(self.model, "synthesize"):
+        if hasattr(self.model, "generate_custom_voice"):
+            language = os.getenv("QWEN_TTS_LANGUAGE", "english").lower()
+            if language in ("en", "eng", "en-us", "en-uk"):
+                language = "english"
+            audio = self.model.generate_custom_voice(
+                text=text,
+                speaker=speaker,
+                language=language,
+                instruct=instruct,
+                non_streaming_mode=True,
+            )
+        elif hasattr(self.model, "synthesize"):
             audio = self.model.synthesize(text=text, speaker=speaker, instruct=instruct)
         elif hasattr(self.model, "infer"):
             audio = self.model.infer(text=text, speaker=speaker, instruct=instruct)
@@ -190,6 +217,8 @@ class QwenTTSService:
         else:
             raise RuntimeError("Unexpected QwenTTS output")
 
+        if isinstance(waveform, list):
+            waveform = waveform[0] if waveform else []
         waveform = self._to_numpy(waveform)
         if sr is None:
             raise RuntimeError("Sample rate missing from QwenTTS output")
