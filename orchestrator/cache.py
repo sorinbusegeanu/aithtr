@@ -5,7 +5,8 @@ import os
 from typing import Any, Dict, Optional
 
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-DEFAULT_CACHE_PATH = os.path.join(BASE_DIR, "data", "artifacts", "cache_index.json")
+DEFAULT_DATA_ROOT = os.getenv("DATA_ROOT", os.path.join(BASE_DIR, "data"))
+DEFAULT_CACHE_PATH = os.path.join(DEFAULT_DATA_ROOT, "artifacts", "cache_index.json")
 
 
 def _ensure_dir(path: str) -> None:

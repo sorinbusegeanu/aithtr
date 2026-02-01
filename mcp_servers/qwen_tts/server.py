@@ -4,7 +4,9 @@ Qwen3-TTS MCP server implementation.
 import hashlib
 import json
 import os
+import sys
 import tempfile
+import threading
 from dataclasses import dataclass
 from typing import Any, Dict, Iterable, List, Optional, Tuple
 
@@ -79,9 +81,19 @@ class VoiceMap:
 
 class QwenTTSService:
     def __init__(self) -> None:
+        artifact_root = os.getenv("ARTIFACT_ROOT", "/data/artifacts")
+        default_cache_root = os.path.abspath(os.path.join(artifact_root, "..", "tts", "cache"))
+        cache_root = os.getenv("QWEN_TTS_CACHE_ROOT", default_cache_root)
+        os.makedirs(cache_root, exist_ok=True)
+        os.environ.setdefault("XDG_CACHE_HOME", cache_root)
+        os.environ.setdefault("HF_HOME", os.path.join(cache_root, "hf"))
+        os.environ.setdefault("HF_HUB_CACHE", os.path.join(cache_root, "hf", "hub"))
+        os.environ.setdefault("TRANSFORMERS_CACHE", os.path.join(cache_root, "hf", "transformers"))
+        os.environ.setdefault("TORCHINDUCTOR_CACHE_DIR", os.path.join(cache_root, "torchinductor"))
         self.config = self._load_config()
         self.model = None
         self.speakers = []
+        self._model_lock = threading.Lock()
         voice_map_path = os.getenv("VOICE_MAP_PATH", "/data/tts/voice_map.json")
         self.voice_map = VoiceMap(voice_map_path, [])
         self.store = ArtifactStore(root=os.getenv("ARTIFACT_ROOT", "/data/artifacts"))
@@ -140,6 +152,11 @@ class QwenTTSService:
     def _load_config(self) -> QwenConfig:
         model_name = os.getenv("QWEN_TTS_MODEL", DEFAULT_MODEL)
         device = os.getenv("QWEN_TTS_DEVICE") or ("cuda" if torch.cuda.is_available() else "cpu")
+        require_cuda = os.getenv("QWEN_TTS_REQUIRE_CUDA", "0") == "1"
+        if require_cuda and device != "cuda":
+            raise RuntimeError("QWEN_TTS_REQUIRE_CUDA=1 but QWEN_TTS_DEVICE is not 'cuda'")
+        if device == "cuda" and not torch.cuda.is_available():
+            raise RuntimeError("QWEN_TTS_DEVICE=cuda but CUDA is not available")
         dtype_env = os.getenv("QWEN_TTS_DTYPE", "")
         if dtype_env.lower() == "float16":
             dtype = torch.float16
@@ -153,6 +170,8 @@ class QwenTTSService:
         return QwenConfig(model_name=model_name, dtype=dtype, device=device, use_flash_attn=use_flash)
 
     def _load_model(self) -> Any:
+        os.environ.setdefault("TORCH_COMPILE_DISABLE", "1")
+        os.environ.setdefault("TORCHINDUCTOR_DISABLE", "1")
         qwen_tts = _import_qwen_tts()
 
         if hasattr(qwen_tts, "Qwen3TTSModel"):
@@ -169,14 +188,16 @@ class QwenTTSService:
 
     def _ensure_model(self) -> None:
         if self.model is None:
-            self.model = self._load_model()
-            print(
-                f"[qwen-tts] device={self.config.device} dtype={self.config.dtype} "
-                f"cuda_available={torch.cuda.is_available()}",
-                flush=True,
-            )
-            self.speakers = self._load_speakers()
-            self.voice_map = VoiceMap(os.getenv("VOICE_MAP_PATH", "/data/tts/voice_map.json"), self.speakers)
+            with self._model_lock:
+                if self.model is None:
+                    self.model = self._load_model()
+                    print(
+                        f"[qwen-tts] device={self.config.device} dtype={self.config.dtype} "
+                        f"cuda_available={torch.cuda.is_available()}",
+                        flush=True,
+                    )
+                    self.speakers = self._load_speakers()
+                    self.voice_map = VoiceMap(os.getenv("VOICE_MAP_PATH", "/data/tts/voice_map.json"), self.speakers)
 
     def _load_speakers(self) -> List[str]:
         env = os.getenv("QWEN_TTS_SPEAKERS", "")
@@ -247,9 +268,22 @@ class QwenTTSService:
         return scipy.signal.resample_poly(waveform, up, down).astype(np.float32)
 
 
+_QWEN_TTS_MODULE = None
+_QWEN_TTS_LOCK = threading.Lock()
+
+
 def _import_qwen_tts():
-    try:
-        import qwen_tts
-        return qwen_tts
-    except Exception as exc:
-        raise ImportError(f"Failed to import qwen_tts: {exc}")
+    global _QWEN_TTS_MODULE
+    with _QWEN_TTS_LOCK:
+        if _QWEN_TTS_MODULE is not None:
+            return _QWEN_TTS_MODULE
+        try:
+            import qwen_tts
+            _QWEN_TTS_MODULE = qwen_tts
+            return qwen_tts
+        except Exception as exc:
+            if "already registered" in str(exc) and "qwen_tts" in sys.modules:
+                _QWEN_TTS_MODULE = sys.modules.get("qwen_tts")
+                if _QWEN_TTS_MODULE is not None:
+                    return _QWEN_TTS_MODULE
+            raise ImportError(f"Failed to import qwen_tts: {exc}")

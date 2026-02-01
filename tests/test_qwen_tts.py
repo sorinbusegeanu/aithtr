@@ -47,27 +47,14 @@ def _get_free_port() -> int:
 
 @pytest.mark.integration
 def test_qwen_tts_smoke(tmp_path):
-    use_external = os.getenv("TEST_USE_EXTERNAL_TTS", "0") == "1"
-    url = os.getenv("QWEN_TTS_URL") if use_external else None
+    url = os.getenv("QWEN_TTS_URL") or "http://localhost:7203/mcp"
+    use_external = True
     proc = None
     try:
-        if url:
-            if not _wait_for_url(url, timeout_sec=5):
-                pytest.skip(f"TTS server not reachable at {url}")
-            _reset_voice_map()
-        else:
-            port = _get_free_port()
-            url = f"http://127.0.0.1:{port}/mcp"
-            env = os.environ.copy()
-            env["MCP_HOST"] = "127.0.0.1"
-            env["MCP_PORT"] = str(port)
-            env["ARTIFACT_ROOT"] = str(tmp_path / "artifacts")
-            env["ARTIFACT_AUDIO_ROOT"] = str(tmp_path / "artifacts" / "audio")
-            env["VOICE_MAP_PATH"] = str(tmp_path / "tts" / "voice_map.json")
-            proc = subprocess.Popen([sys.executable, "-m", "mcp_servers.qwen_tts.mcp_server"], env=env)
-            if not _wait_for_url(url, timeout_sec=60):
-                proc.terminate()
-                pytest.skip("TTS server did not start in time")
+        if not _wait_for_url(url, timeout_sec=5):
+            print(f"TTS server not reachable at {url}")
+            pytest.skip(f"TTS server not reachable at {url}")
+        _reset_voice_map()
 
         payload = {
             "jsonrpc": "2.0",
@@ -98,12 +85,16 @@ def test_qwen_tts_smoke(tmp_path):
     assert "result" in data, data
     wav_path = data["result"]["wav_path"]
     duration_ms = data["result"]["duration_ms"]
+    print(f"wav_path={wav_path}")
     assert duration_ms > 0
-    assert os.path.exists(wav_path)
+    host_path = wav_path
+    if not os.path.exists(host_path) and host_path.startswith("/data/"):
+        host_path = os.path.join("data", host_path[len("/data/"):].lstrip("/"))
+    assert os.path.exists(host_path)
 
     ffprobe = shutil.which("ffprobe")
     if ffprobe:
         subprocess.run(
-            [ffprobe, "-hide_banner", "-loglevel", "error", wav_path],
+            [ffprobe, "-hide_banner", "-loglevel", "error", host_path],
             check=True,
         )

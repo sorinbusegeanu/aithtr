@@ -20,8 +20,19 @@ Requirements:
 """.strip()
 
 
-def run(input_data: Dict[str, Any], llm: LLMClient | None = None) -> Dict[str, Any]:
+def run(
+    input_data: Dict[str, Any],
+    llm: LLMClient | None = None,
+    critic_feedback: str | None = None,
+) -> Dict[str, Any]:
     """Pure function: input -> QC report."""
     llm = llm or LLMClient()
     prompt = PROMPT.format(input_json=input_data)
+    if critic_feedback:
+        prompt = (
+            prompt
+            + "\n\n# Critic Feedback\n"
+            + critic_feedback
+            + "\n\nRevise your output accordingly while keeping the required JSON shape."
+        )
     return llm.complete_json(prompt)

@@ -25,6 +25,7 @@ class LLMClient:
         self.config = config or LLMConfig()
         self.last_raw: Optional[str] = None
         self.last_prompt: Optional[str] = None
+        self.last_messages: Optional[list[dict[str, str]]] = None
 
     def complete_json(self, prompt: str) -> Dict[str, Any]:
         """Return JSON-only output from vLLM."""
@@ -46,6 +47,7 @@ class LLMClient:
             "temperature": self.config.temperature,
             "max_tokens": self.config.max_tokens,
         }
+        self.last_messages = list(payload["messages"])
         if self.config.seed is not None:
             payload["seed"] = self.config.seed
         if self.config.json_only:
@@ -111,6 +113,7 @@ class LLMClient:
             "temperature": 0.0,
             "max_tokens": self.config.max_tokens,
         }
+        self.last_messages = list(payload["messages"])
         if self.config.seed is not None:
             payload["seed"] = self.config.seed
         if self.config.json_only:

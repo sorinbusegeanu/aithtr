@@ -16,7 +16,7 @@ Canonical artifacts:
 - `performance/*.wav` + `performance/*.mp4`
 - `timeline.json` (edit decision list)
 - `episode.mp4` + `preview.mp4`
-- `critic_report.json`
+- `critic_report.json` / per-step `critic/review.json`
 
 ## 1) Orchestrator Agent (Supervisor)
 
@@ -37,6 +37,7 @@ Canonical artifacts:
   - Gate B: preview approval
 - Automatic QC gating:
   - duration bounds, missing lines, missing assets, audio peak/loudness checks
+- Automated critic gate for agent outputs (descriptive evaluation + score + pass/fail)
 - Caching: if an input hash matches, reuse artifacts
 
 **MCP tools required**
@@ -121,7 +122,28 @@ Canonical artifacts:
 
 ---
 
-## 5) Human Critic Gate A (Screenplay approval)
+## 5) Critic Agent (Automated per-step review)
+
+**Goal**: Evaluate each agent output (except QC) with a descriptive review, quality score, and pass/fail.
+
+**Inputs**
+- step input JSON
+- step output JSON
+- schema hint and validator errors (if any)
+
+**Outputs**
+- `critic_review.json`:
+  - `evaluation` (descriptive)
+  - `quality_score` (0–100)
+  - `passed` (boolean)
+
+**Behavior**
+- If `passed=false`, feedback is sent back to the originating agent for a retry.
+- Reviews are logged to the centralized transcript.
+
+---
+
+## 6) Human Critic Gate A (Screenplay approval)
 
 **Goal**: Approve or request minimal targeted changes before expensive generation.
 
@@ -142,7 +164,7 @@ Canonical artifacts:
 
 ---
 
-## 6) Casting Director Agent (Cast selection + voice/visual binding)
+## 7) Casting Director Agent (Cast selection + voice/visual binding)
 
 **Goal**: Map roles → stable character identities (voice + avatar), preserving consistency across episodes.
 
@@ -165,7 +187,7 @@ Canonical artifacts:
 
 ---
 
-## 7) Scene Designer Agent (Background + props)
+## 8) Scene Designer Agent (Background + props)
 
 **Goal**: Produce consistent scene visuals from a bounded library (fast) or generator (optional).
 
@@ -187,7 +209,7 @@ Canonical artifacts:
 
 ---
 
-## 8) Director Agent (Blocking + shot plan)
+## 9) Director Agent (Blocking + shot plan)
 
 **Goal**: Decide who is on screen, where, and when (layout + timing).
 
@@ -209,7 +231,7 @@ Canonical artifacts:
 
 ---
 
-## 9) Voice Actor Agent (per character)
+## 10) Voice Actor Agent (per character)
 
 One agent instance per character.
 
@@ -231,7 +253,7 @@ One agent instance per character.
 
 ---
 
-## 10) Performance Animator Agent (per character)
+## 11) Performance Animator Agent (per character)
 
 One agent instance per character.
 
@@ -252,7 +274,7 @@ One agent instance per character.
 
 ---
 
-## 11) Foley & Music Agent
+## 12) Foley & Music Agent
 
 **Goal**: Select/generate SFX/music cues from a local library.
 
@@ -270,7 +292,7 @@ One agent instance per character.
 
 ---
 
-## 12) Editor Agent (Timeline / EDL)
+## 13) Editor Agent (Timeline / EDL)
 
 **Goal**: Convert screenplay + scene_plan + performances into a final edit decision list.
 
@@ -293,7 +315,7 @@ One agent instance per character.
 
 ---
 
-## 13) Renderer Agent (Final + preview)
+## 14) Renderer Agent (Final + preview)
 
 **Goal**: Render `timeline.json` into MP4.
 
@@ -311,7 +333,7 @@ One agent instance per character.
 
 ---
 
-## 14) QC Agent (Automated quality gates)
+## 15) QC Agent (Automated quality gates)
 
 **Goal**: Detect obvious failures before human review.
 
@@ -330,7 +352,7 @@ One agent instance per character.
 
 ---
 
-## 15) Human Critic Gate B (Preview approval)
+## 16) Human Critic Gate B (Preview approval)
 
 **Goal**: Approve final or request specific revisions.
 
@@ -349,7 +371,7 @@ One agent instance per character.
 
 ---
 
-## 16) Learning / Memory Curator Agent
+## 17) Learning / Memory Curator Agent
 
 **Goal**: Convert outcomes into training data and retrieval memories.
 

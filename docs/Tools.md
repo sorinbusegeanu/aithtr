@@ -16,6 +16,10 @@ Open-source tools only. Each tool runs as an **MCP server** inside a **Docker co
 
 Recommendation for “fully automated but deterministic”: **LangGraph** for the orchestrator + checkpointing.
 
+### Logging
+- Centralized chat-style transcript (per run) is supported by the orchestrator.
+- Enable with `--transcript`, default output at `data/runs/<episode_id>/conversation.log`.
+
 ---
 
 ## B) Memory store (supports learning)

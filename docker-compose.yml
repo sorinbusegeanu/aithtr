@@ -35,56 +35,95 @@ services:
     build:
       context: .
       dockerfile: orchestrator/Dockerfile
+    user: "${UID}:${GID}"
     depends_on:
       vllm:
         condition: service_healthy
       mcp-qwen-tts:
         condition: service_healthy
+      mcp-assets:
+        condition: service_healthy
+      mcp-memory:
+        condition: service_healthy
+      mcp-lipsync:
+        condition: service_healthy
+      mcp-render:
+        condition: service_healthy
+      mcp-qc:
+        condition: service_healthy
     volumes:
       - ./data:/data
     environment:
+      MCP_TRANSPORT: "sse"
       ARTIFACT_ROOT: /data/artifacts
       MEMORY_DB_PATH: /data/sqlite/memory.db
       ASSET_CATALOG_PATH: /data/assets/catalog.json
       QWEN_TTS_URL: http://mcp-qwen-tts:7203/mcp
+      MCP_ASSETS_URL: http://mcp-assets:7101/mcp/sse
+      MCP_MEMORY_URL: http://mcp-memory:7102/mcp/sse
+      MCP_LIPSYNC_URL: http://mcp-lipsync:7104/mcp/sse
+      MCP_RENDER_URL: http://mcp-render:7105/mcp/sse
+      MCP_QC_URL: http://mcp-qc:7106/mcp/sse
       VLLM_BASE_URL: http://vllm:8000/v1
       LLM_MAX_TOKENS: "4096"
       TOOL_RETRIES: "5"
       LLM_TIMEOUT_SEC: "180"
-    command: ["python", "-m", "orchestrator.cli", "--help"]
+      CRITIC_GATE_ENABLED: "0"
+      DATA_ROOT: /data
+      ORCH_CACHE_PATH: /data/artifacts/cache_index.json
+      AGENT_RETRIES: "5"
+      CRITIC_PASS_SCORE: "75"
+      TTS_MAX_WORKERS: "1"
+    command: ["python", "-m", "orchestrator.cli", "--theme", "space", "--mood", "funny", "--duration", "300", "--auto-approve", "--transcript"]
 
   mcp-assets:
     build:
       context: .
       dockerfile: mcp_servers/assets/Dockerfile
+    user: "${UID}:${GID}"
     volumes:
       - ./data:/data
     environment:
-      MCP_TRANSPORT: "stdio"
+      MCP_TRANSPORT: "sse"
+      MCP_HOST: "0.0.0.0"
+      MCP_PORT: "7101"
+      MCP_PATH: "/mcp"
+      OPENVERSE_CLIENT_ID: "${OPENVERSE_CLIENT_ID}"
+      OPENVERSE_CLIENT_SECRET: "${OPENVERSE_CLIENT_SECRET}"
+      OPENVERSE_CLIENT_NAME: "${OPENVERSE_CLIENT_NAME}"
+    ports:
+      - "7101:7101"
     healthcheck:
-      test: ["CMD-SHELL", "python -c \"print('ok')\""]
-      interval: 30s
-      timeout: 5s
-      retries: 3
+      test: ["CMD-SHELL", "python -c \"import socket; s=socket.create_connection(('localhost',7101),2); s.close()\""]
+      interval: 10s
+      timeout: 3s
+      retries: 5
 
   mcp-memory:
     build:
       context: .
       dockerfile: mcp_servers/memory/Dockerfile
+    user: "${UID}:${GID}"
     volumes:
       - ./data:/data
     environment:
-      MCP_TRANSPORT: "stdio"
+      MCP_TRANSPORT: "sse"
+      MCP_HOST: "0.0.0.0"
+      MCP_PORT: "7102"
+      MCP_PATH: "/mcp"
+    ports:
+      - "7102:7102"
     healthcheck:
-      test: ["CMD-SHELL", "python -c \"print('ok')\""]
-      interval: 30s
-      timeout: 5s
-      retries: 3
+      test: ["CMD-SHELL", "python -c \"import socket; s=socket.create_connection(('localhost',7102),2); s.close()\""]
+      interval: 10s
+      timeout: 3s
+      retries: 5
 
   mcp-qwen-tts:
     build:
       context: .
       dockerfile: mcp_servers/qwen_tts/Dockerfile
+    user: "${UID}:${GID}"
     gpus: all
     volumes:
       - ./data:/data
@@ -93,6 +132,16 @@ services:
     environment:
       QWEN_TTS_DEVICE: cuda
       QWEN_TTS_DTYPE: bfloat16
+      QWEN_TTS_REQUIRE_CUDA: "1"
+      QWEN_TTS_FLASH_ATTN: "1"
+      TORCH_COMPILE_DISABLE: "1"
+      TORCHINDUCTOR_DISABLE: "1"
+      QWEN_TTS_CACHE_ROOT: /data/tts/cache
+      XDG_CACHE_HOME: /data/tts/cache
+      HF_HOME: /data/tts/cache/hf
+      HF_HUB_CACHE: /data/tts/cache/hf/hub
+      TRANSFORMERS_CACHE: /data/tts/cache/hf/transformers
+      TORCHINDUCTOR_CACHE_DIR: /data/tts/cache/torchinductor
     deploy:
       resources:
         reservations:
@@ -110,40 +159,61 @@ services:
     build:
       context: .
       dockerfile: mcp_servers/lipsync/Dockerfile
+    user: "${UID}:${GID}"
     volumes:
       - ./data:/data
+      - ./data/models/wav2lip:/data/models/wav2lip
+      - ./data/models/wav2lip/s3fd-619a316812.pth:/opt/wav2lip/face_detection/detection/sfd/s3fd.pth
     environment:
-      MCP_TRANSPORT: "stdio"
+      MCP_TRANSPORT: "sse"
+      MCP_HOST: "0.0.0.0"
+      MCP_PORT: "7104"
+      MCP_PATH: "/mcp"
+      WAV2LIP_CHECKPOINT: /data/models/wav2lip/wav2lip_gan.pth
+    ports:
+      - "7104:7104"
     healthcheck:
-      test: ["CMD-SHELL", "python -c \"print('ok')\""]
-      interval: 30s
-      timeout: 5s
-      retries: 3
+      test: ["CMD-SHELL", "python -c \"import socket; s=socket.create_connection(('localhost',7104),2); s.close()\""]
+      interval: 10s
+      timeout: 3s
+      retries: 5
 
   mcp-render:
     build:
       context: .
       dockerfile: mcp_servers/render/Dockerfile
+    user: "${UID}:${GID}"
     volumes:
       - ./data:/data
     environment:
-      MCP_TRANSPORT: "stdio"
+      MCP_TRANSPORT: "sse"
+      MCP_HOST: "0.0.0.0"
+      MCP_PORT: "7105"
+      MCP_PATH: "/mcp"
+    ports:
+      - "7105:7105"
     healthcheck:
-      test: ["CMD-SHELL", "python -c \"print('ok')\""]
-      interval: 30s
-      timeout: 5s
-      retries: 3
+      test: ["CMD-SHELL", "python -c \"import socket; s=socket.create_connection(('localhost',7105),2); s.close()\""]
+      interval: 10s
+      timeout: 3s
+      retries: 5
 
   mcp-qc:
     build:
       context: .
       dockerfile: mcp_servers/qc/Dockerfile
+    user: "${UID}:${GID}"
     volumes:
       - ./data:/data
     environment:
-      MCP_TRANSPORT: "stdio"
+      MCP_TRANSPORT: "sse"
+      MCP_HOST: "0.0.0.0"
+      MCP_PORT: "7106"
+      MCP_PATH: "/mcp"
+    ports:
+      - "7106:7106"
     healthcheck:
-      test: ["CMD-SHELL", "python -c \"print('ok')\""]
-      interval: 30s
-      timeout: 5s
-      retries: 3
+      test: ["CMD-SHELL", "python -c \"import socket; s=socket.create_connection(('localhost',7106),2); s.close()\""]
+      interval: 10s
+      timeout: 3s
+      retries: 5

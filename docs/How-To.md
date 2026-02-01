@@ -2,7 +2,7 @@
 
 ## Main Modules
 - `orchestrator/` AutoGen-based supervisor and run graph.
-- `agents/` Specialist agents (showrunner, writer, dramaturg, casting, scene, director, editor, qc, curator).
+- `agents/` Specialist agents (showrunner, writer, dramaturg, casting, scene, director, editor, qc, curator, critic).
 - `mcp_servers/` MCP servers for assets, TTS, lipsync, render, QC, memory.
 - `schemas/` JSON schemas for all agent I/O and artifacts.
 - `runtime/` Docker-compose, env templates, deployment wiring.
@@ -26,3 +26,13 @@ Local MCP servers over HTTP (runtime helpers):
 ```bash
 docker compose -f runtime/docker-compose.yml up
 ```
+
+## Centralized Transcript
+Enable per-run chat-style transcripts with:
+```bash
+python -m orchestrator.cli --theme "space" --mood "funny" --duration 300 --transcript
+```
+
+Transcript output:
+- Default: `data/runs/<episode_id>/conversation.log`
+- Override: `--transcript-path /path/to/conversation.log`

@@ -8,7 +8,20 @@ from mcp.server.fastmcp import FastMCP
 from .server import AssetService
 
 
-mcp = FastMCP("mcp-assets", json_response=True)
+host = os.getenv("MCP_HOST", "127.0.0.1")
+port = int(os.getenv("MCP_PORT", "8000"))
+path = os.getenv("MCP_PATH", "/mcp").rstrip("/")
+sse_path = f"{path}/sse"
+message_path = f"{path}/messages/"
+
+mcp = FastMCP(
+    "mcp-assets",
+    json_response=True,
+    host=host,
+    port=port,
+    sse_path=sse_path,
+    message_path=message_path,
+)
 service = AssetService()
 
 
@@ -49,7 +62,4 @@ def asset_search(
 
 if __name__ == "__main__":
     transport = os.getenv("MCP_TRANSPORT", "stdio")
-    host = os.getenv("MCP_HOST", "127.0.0.1")
-    port = int(os.getenv("MCP_PORT", "8000"))
-    path = os.getenv("MCP_PATH", "/mcp")
     mcp.run(transport=transport)

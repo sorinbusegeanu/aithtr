@@ -15,6 +15,10 @@ def run_daily_episode(args: argparse.Namespace) -> Dict[str, Any]:
         duration_sec=args.duration,
         auto_approve=args.auto_approve,
         seed=args.seed,
+        transcript=args.transcript,
+        transcript_path=args.transcript_path,
+        resume_run_id=args.resume_run_id,
+        resume_from_step=args.resume_from_step,
     )
     manifest = orch.run_daily_episode(config)
 
@@ -37,7 +41,15 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--duration", type=int, default=300)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--auto-approve", action="store_true")
-    parser.add_argument("--output-dir", default="data")
+    parser.add_argument("--output-dir", default=os.getenv("DATA_ROOT", "data"))
+    parser.add_argument("--transcript", action="store_true", help="Write a chat-style transcript per run")
+    parser.add_argument("--transcript-path", default=None, help="Override transcript log path")
+    parser.add_argument("--resume-run-id", default=None, help="Resume an existing run id in data/runs")
+    parser.add_argument(
+        "--resume-from-step",
+        default=None,
+        help="Re-run from this step onward (showrunner, writer, dramaturg, casting, scene, director, performance, editor, render_preview, render_final, qc, curator)",
+    )
     return parser
 
 

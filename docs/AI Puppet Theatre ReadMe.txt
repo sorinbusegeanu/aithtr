@@ -23,6 +23,8 @@ Dialogue (script or LLM)
 
 * 100% automated, no manual animation.
 * Deterministic (same script = same video).
+* Automated critic reviews agent outputs with a quality score and pass/fail.
+* Centralized per-run transcript logging (optional).
 * Supports multiple characters and scenes.
 * Fixed camera, minimal motion (face + upper body).
 * Suitable for episodic YouTube content.

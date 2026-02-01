@@ -1,8 +1,11 @@
 """Hard validators for pipeline artifacts."""
 import os
-from typing import Any, Dict, List, Set
+from typing import Any, Dict, List, Protocol, Set
 
-from mcp_servers.assets.artifact_store import ArtifactStore
+
+class AssetStoreLike(Protocol):
+    def get_path(self, artifact_id: str) -> str:
+        ...
 
 
 def estimate_screenplay_duration_sec(screenplay: Dict[str, Any], words_per_sec: float = 2.0) -> float:
@@ -115,7 +118,7 @@ def validate_cast_plan(cast_plan: Dict[str, Any], screenplay: Dict[str, Any]) ->
 def validate_timeline_references(
     timeline: Dict[str, Any],
     screenplay: Dict[str, Any],
-    store: ArtifactStore,
+    store: AssetStoreLike,
 ) -> List[str]:
     errors: List[str] = []
     scene_ids = {s.get("scene_id") for s in screenplay.get("scenes", []) if s.get("scene_id")}
@@ -135,7 +138,7 @@ def validate_timeline_references(
     return errors
 
 
-def _asset_exists(asset_id: Any, store: ArtifactStore) -> bool:
+def _asset_exists(asset_id: Any, store: AssetStoreLike) -> bool:
     if not asset_id:
         return False
     if isinstance(asset_id, str) and os.path.exists(asset_id):

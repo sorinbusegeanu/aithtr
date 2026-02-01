@@ -26,7 +26,11 @@ Requirements:
 """.strip()
 
 
-def run(input_data: Dict[str, Any], llm: LLMClient | None = None) -> Dict[str, Any]:
+def run(
+    input_data: Dict[str, Any],
+    llm: LLMClient | None = None,
+    critic_feedback: str | None = None,
+) -> Dict[str, Any]:
     """Pure function: input -> screenplay draft."""
     llm = llm or LLMClient()
     style_guard = (input_data.get("series_bible") or {}).get("style_guard", {})
@@ -38,4 +42,11 @@ def run(input_data: Dict[str, Any], llm: LLMClient | None = None) -> Dict[str, A
         target_duration_sec=input_data.get("target_duration_sec", ""),
         min_words=int(max((input_data.get("target_duration_sec") or 0) * 2.0, 0)),
     )
+    if critic_feedback:
+        prompt = (
+            prompt
+            + "\n\n# Critic Feedback\n"
+            + critic_feedback
+            + "\n\nRevise your output accordingly while keeping the required JSON shape."
+        )
     return llm.complete_json(prompt)

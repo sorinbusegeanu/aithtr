@@ -22,3 +22,11 @@ def load_character_bible(path: str | None = None) -> Dict[str, Any]:
         return {}
     with open(bible_path, "r", encoding="utf-8") as f:
         return json.load(f)
+
+
+def save_character_bible(data: Dict[str, Any], path: str | None = None) -> str:
+    bible_path = path or os.getenv("CHARACTER_BIBLE_PATH", DEFAULT_CHARACTER_BIBLE)
+    os.makedirs(os.path.dirname(bible_path), exist_ok=True)
+    with open(bible_path, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=True, indent=2)
+    return bible_path

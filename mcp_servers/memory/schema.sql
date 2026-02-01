@@ -49,33 +49,34 @@ CREATE TABLE IF NOT EXISTS retrieval_notes (
 );
 
 CREATE VIRTUAL TABLE IF NOT EXISTS retrieval_fts USING fts5(
-  note_id,
+  note_id UNINDEXED,
   type,
   text,
-  tags,
+  tags_json,
   episode_id,
-  content=''
+  content='retrieval_notes',
+  content_rowid='rowid'
 );
 
 CREATE TRIGGER IF NOT EXISTS retrieval_notes_ai
 AFTER INSERT ON retrieval_notes
 BEGIN
-  INSERT INTO retrieval_fts(note_id, type, text, tags, episode_id)
-  VALUES (new.note_id, new.type, new.text, new.tags_json, new.episode_id);
+  INSERT INTO retrieval_fts(rowid, note_id, type, text, tags_json, episode_id)
+  VALUES (new.rowid, new.note_id, new.type, new.text, new.tags_json, new.episode_id);
 END;
 
 CREATE TRIGGER IF NOT EXISTS retrieval_notes_ad
 AFTER DELETE ON retrieval_notes
 BEGIN
-  INSERT INTO retrieval_fts(retrieval_fts, note_id, type, text, tags, episode_id)
-  VALUES ('delete', old.note_id, old.type, old.text, old.tags_json, old.episode_id);
+  INSERT INTO retrieval_fts(retrieval_fts, rowid, note_id, type, text, tags_json, episode_id)
+  VALUES ('delete', old.rowid, old.note_id, old.type, old.text, old.tags_json, old.episode_id);
 END;
 
 CREATE TRIGGER IF NOT EXISTS retrieval_notes_au
 AFTER UPDATE ON retrieval_notes
 BEGIN
-  INSERT INTO retrieval_fts(retrieval_fts, note_id, type, text, tags, episode_id)
-  VALUES ('delete', old.note_id, old.type, old.text, old.tags_json, old.episode_id);
-  INSERT INTO retrieval_fts(note_id, type, text, tags, episode_id)
-  VALUES (new.note_id, new.type, new.text, new.tags_json, new.episode_id);
+  INSERT INTO retrieval_fts(retrieval_fts, rowid, note_id, type, text, tags_json, episode_id)
+  VALUES ('delete', old.rowid, old.note_id, old.type, old.text, old.tags_json, old.episode_id);
+  INSERT INTO retrieval_fts(rowid, note_id, type, text, tags_json, episode_id)
+  VALUES (new.rowid, new.note_id, new.type, new.text, new.tags_json, new.episode_id);
 END;

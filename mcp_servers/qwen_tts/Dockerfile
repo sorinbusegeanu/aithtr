@@ -1,10 +1,16 @@
+# syntax=docker/dockerfile:1.5
 FROM python:3.11-slim
 
 WORKDIR /app
 
 COPY mcp_servers/qwen_tts/requirements.txt /tmp/requirements.txt
-RUN apt-get update && apt-get install -y ffmpeg sox && rm -rf /var/lib/apt/lists/* \
-    && pip install --no-cache-dir -r /tmp/requirements.txt
+COPY data/models/flash_attn/flash_attn-2.8.3+cu128torch2.10-cp311-cp311-linux_x86_64.whl /tmp/flash_attn-2.8.3+cu128torch2.10-cp311-cp311-linux_x86_64.whl
+RUN apt-get update && apt-get install -y ffmpeg sox \
+    && rm -rf /var/lib/apt/lists/*
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install -r /tmp/requirements.txt
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install /tmp/flash_attn-2.8.3+cu128torch2.10-cp311-cp311-linux_x86_64.whl
 
 COPY . /app
 

@@ -1,9 +1,11 @@
+# syntax=docker/dockerfile:1.5
 FROM python:3.11-slim
 
 WORKDIR /app
 COPY . /app
 
-RUN pip install --no-cache-dir mcp
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install mcp
 
 ENV ARTIFACT_ROOT=/data/artifacts \
     MCP_TRANSPORT=http \

@@ -7,7 +7,20 @@ from mcp.server.fastmcp import FastMCP
 from .server import QCService
 
 
-mcp = FastMCP("mcp-qc", json_response=True)
+host = os.getenv("MCP_HOST", "127.0.0.1")
+port = int(os.getenv("MCP_PORT", "8000"))
+path = os.getenv("MCP_PATH", "/mcp").rstrip("/")
+sse_path = f"{path}/sse"
+message_path = f"{path}/messages/"
+
+mcp = FastMCP(
+    "mcp-qc",
+    json_response=True,
+    host=host,
+    port=port,
+    sse_path=sse_path,
+    message_path=message_path,
+)
 service = QCService()
 
 
@@ -28,7 +41,4 @@ def qc_timeline_validate(timeline_json: Dict[str, Any]) -> Dict[str, Any]:
 
 if __name__ == "__main__":
     transport = os.getenv("MCP_TRANSPORT", "stdio")
-    host = os.getenv("MCP_HOST", "127.0.0.1")
-    port = int(os.getenv("MCP_PORT", "8000"))
-    path = os.getenv("MCP_PATH", "/mcp")
     mcp.run(transport=transport)

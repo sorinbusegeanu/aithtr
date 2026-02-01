@@ -7,7 +7,7 @@ services:
     volumes:
       - ..:/app
     environment:
-      MCP_TRANSPORT: "http"
+      MCP_TRANSPORT: "sse"
       MCP_HOST: "0.0.0.0"
       MCP_PORT: "7101"
       MCP_PATH: "/mcp"
@@ -21,7 +21,7 @@ services:
     volumes:
       - ..:/app
     environment:
-      MCP_TRANSPORT: "http"
+      MCP_TRANSPORT: "sse"
       MCP_HOST: "0.0.0.0"
       MCP_PORT: "7102"
       MCP_PATH: "/mcp"
@@ -35,7 +35,7 @@ services:
     volumes:
       - ..:/app
     environment:
-      MCP_TRANSPORT: "http"
+      MCP_TRANSPORT: "sse"
       MCP_HOST: "0.0.0.0"
       MCP_PORT: "7103"
       MCP_PATH: "/mcp"
@@ -49,7 +49,7 @@ services:
     volumes:
       - ..:/app
     environment:
-      MCP_TRANSPORT: "http"
+      MCP_TRANSPORT: "sse"
       MCP_HOST: "0.0.0.0"
       MCP_PORT: "7104"
       MCP_PATH: "/mcp"
@@ -63,7 +63,7 @@ services:
     volumes:
       - ..:/app
     environment:
-      MCP_TRANSPORT: "http"
+      MCP_TRANSPORT: "sse"
       MCP_HOST: "0.0.0.0"
       MCP_PORT: "7105"
       MCP_PATH: "/mcp"
@@ -78,7 +78,7 @@ services:
     volumes:
       - ..:/app
     environment:
-      MCP_TRANSPORT: "http"
+      MCP_TRANSPORT: "sse"
       MCP_HOST: "0.0.0.0"
       MCP_PORT: "7106"
       MCP_PATH: "/mcp"

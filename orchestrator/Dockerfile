@@ -1,10 +1,13 @@
+# syntax=docker/dockerfile:1.5
 FROM python:3.11-slim
 
 WORKDIR /app
 
 COPY orchestrator/requirements.txt /tmp/requirements.txt
-RUN apt-get update && apt-get install -y ffmpeg && rm -rf /var/lib/apt/lists/* \
-    && pip install --no-cache-dir -r /tmp/requirements.txt
+RUN apt-get update && apt-get install -y ffmpeg \
+    && rm -rf /var/lib/apt/lists/*
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install -r /tmp/requirements.txt
 
 COPY . /app
 
