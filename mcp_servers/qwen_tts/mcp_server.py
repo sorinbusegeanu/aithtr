@@ -1,13 +1,13 @@
-"""Minimal HTTP JSON-RPC server for Qwen TTS tools."""
+"""Minimal HTTP JSON-RPC server for XTTSv2 tools."""
 import json
 import os
-from http.server import BaseHTTPRequestHandler, HTTPServer
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from typing import Any, Dict
 
-from .server import QwenTTSService
+from .server import XTTSService
 
 
-service = QwenTTSService()
+service = XTTSService()
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -64,7 +64,8 @@ def handle_rpc(payload: Dict[str, Any]) -> Dict[str, Any]:
 def main() -> None:
     host = os.getenv("MCP_HOST", "0.0.0.0")
     port = int(os.getenv("MCP_PORT", "7203"))
-    server = HTTPServer((host, port), Handler)
+    # Keep health checks responsive even while a long synthesis request is running.
+    server = ThreadingHTTPServer((host, port), Handler)
     server.serve_forever()
 
 

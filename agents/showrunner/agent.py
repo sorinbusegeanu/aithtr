@@ -25,7 +25,7 @@ def run(
     critic_feedback: str | None = None,
 ) -> Dict[str, Any]:
     """Pure function: input -> episode brief."""
-    llm = llm or LLMClient()
+    llm = llm or LLMClient(agent_name="showrunner")
     prompt = PROMPT.format(input_json=input_data)
     if critic_feedback:
         prompt = (

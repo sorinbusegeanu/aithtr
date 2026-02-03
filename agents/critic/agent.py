@@ -38,7 +38,7 @@ def run(
     llm: LLMClient | None = None,
 ) -> Dict[str, Any]:
     """Critique a step output."""
-    llm = llm or LLMClient()
+    llm = llm or LLMClient(agent_name="critic")
     prompt = PROMPT.format(
         step_name=step_name,
         schema_hint=schema_hint,

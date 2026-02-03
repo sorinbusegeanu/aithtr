@@ -1,7 +1,2 @@
 mcp
-qwen-tts
-torch
-torchaudio
-numpy
 soundfile
-scipy

@@ -13,6 +13,7 @@ services:
               capabilities: ["gpu"]
     environment:
       NVIDIA_VISIBLE_DEVICES: all
+      LD_PRELOAD: /lib/x86_64-linux-gnu/libcuda.so.1
     command:
       - "--model"
       - "Qwen/Qwen2.5-3B-Instruct"
@@ -39,7 +40,7 @@ services:
     depends_on:
       vllm:
         condition: service_healthy
-      mcp-qwen-tts:
+      mcp-xtts:
         condition: service_healthy
       mcp-assets:
         condition: service_healthy
@@ -58,7 +59,7 @@ services:
       ARTIFACT_ROOT: /data/artifacts
       MEMORY_DB_PATH: /data/sqlite/memory.db
       ASSET_CATALOG_PATH: /data/assets/catalog.json
-      QWEN_TTS_URL: http://mcp-qwen-tts:7203/mcp
+      XTTS_URL: http://mcp-xtts:7203/mcp
       MCP_ASSETS_URL: http://mcp-assets:7101/mcp/sse
       MCP_MEMORY_URL: http://mcp-memory:7102/mcp/sse
       MCP_LIPSYNC_URL: http://mcp-lipsync:7104/mcp/sse
@@ -66,12 +67,23 @@ services:
       MCP_QC_URL: http://mcp-qc:7106/mcp/sse
       VLLM_BASE_URL: http://vllm:8000/v1
       LLM_MAX_TOKENS: "4096"
+      LLM_TEMPERATURE_SHOWRUNNER: "${LLM_TEMPERATURE_SHOWRUNNER}"
+      LLM_TEMPERATURE_WRITER: "${LLM_TEMPERATURE_WRITER}"
+      LLM_TEMPERATURE_DRAMATURG: "${LLM_TEMPERATURE_DRAMATURG}"
+      LLM_TEMPERATURE_CASTING: "${LLM_TEMPERATURE_CASTING}"
+      LLM_TEMPERATURE_SCENE: "${LLM_TEMPERATURE_SCENE}"
+      LLM_TEMPERATURE_DIRECTOR: "${LLM_TEMPERATURE_DIRECTOR}"
+      LLM_TEMPERATURE_EDITOR: "${LLM_TEMPERATURE_EDITOR}"
+      LLM_TEMPERATURE_QC: "${LLM_TEMPERATURE_QC}"
+      LLM_TEMPERATURE_CURATOR: "${LLM_TEMPERATURE_CURATOR}"
+      LLM_TEMPERATURE_CRITIC: "${LLM_TEMPERATURE_CRITIC}"
       TOOL_RETRIES: "5"
       LLM_TIMEOUT_SEC: "180"
       CRITIC_GATE_ENABLED: "0"
       DATA_ROOT: /data
       ORCH_CACHE_PATH: /data/artifacts/cache_index.json
       AGENT_RETRIES: "5"
+      CRITIC_RETRIES: "3"
       CRITIC_PASS_SCORE: "75"
       TTS_MAX_WORKERS: "1"
     command: ["python", "-m", "orchestrator.cli", "--theme", "space", "--mood", "funny", "--duration", "300", "--auto-approve", "--transcript"]
@@ -119,29 +131,27 @@ services:
       timeout: 3s
       retries: 5
 
-  mcp-qwen-tts:
+  mcp-xtts:
     build:
       context: .
       dockerfile: mcp_servers/qwen_tts/Dockerfile
-    user: "${UID}:${GID}"
+    user: "0:0"
+    entrypoint: ["python3", "-m", "mcp_servers.qwen_tts.mcp_server"]
     gpus: all
     volumes:
       - ./data:/data
     ports:
       - "7203:7203"
     environment:
-      QWEN_TTS_DEVICE: cuda
-      QWEN_TTS_DTYPE: bfloat16
-      QWEN_TTS_REQUIRE_CUDA: "1"
-      QWEN_TTS_FLASH_ATTN: "1"
-      TORCH_COMPILE_DISABLE: "1"
-      TORCHINDUCTOR_DISABLE: "1"
-      QWEN_TTS_CACHE_ROOT: /data/tts/cache
+      XTTS_DEVICE: cuda
+      XTTS_MODEL: tts_models/multilingual/multi-dataset/xtts_v2
+      XTTS_LANGUAGE: en
+      COQUI_TOS_AGREED: "1"
+      XTTS_SPEAKER_WAV_DIR: /data/tts/speakers
       XDG_CACHE_HOME: /data/tts/cache
       HF_HOME: /data/tts/cache/hf
       HF_HUB_CACHE: /data/tts/cache/hf/hub
       TRANSFORMERS_CACHE: /data/tts/cache/hf/transformers
-      TORCHINDUCTOR_CACHE_DIR: /data/tts/cache/torchinductor
     deploy:
       resources:
         reservations:
@@ -150,7 +160,7 @@ services:
               count: all
               capabilities: ["gpu"]
     healthcheck:
-      test: ["CMD-SHELL", "python -c \"import socket; s=socket.create_connection(('localhost',7203),2); s.close()\""]
+      test: ["CMD-SHELL", "python3 -c \"import socket; s=socket.create_connection(('localhost',7203),2); s.close()\""]
       interval: 10s
       timeout: 3s
       retries: 5

@@ -24,7 +24,7 @@ def run(
     critic_feedback: str | None = None,
 ) -> Dict[str, Any]:
     """Pure function: input -> scene assets."""
-    llm = llm or LLMClient()
+    llm = llm or LLMClient(agent_name="scene")
     prompt = PROMPT.format(input_json=input_data)
     if critic_feedback:
         prompt = (

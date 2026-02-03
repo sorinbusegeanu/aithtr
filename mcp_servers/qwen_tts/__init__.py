@@ -1,3 +1,3 @@
-from .server import QwenTTSService
+from .server import XTTSService, QwenTTSService
 
-__all__ = ["QwenTTSService"]
+__all__ = ["XTTSService", "QwenTTSService"]

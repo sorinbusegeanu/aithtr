@@ -6,23 +6,55 @@ from dataclasses import dataclass
 from typing import Any, Dict, Optional
 
 
+_DEFAULT_TEMPERATURES: Dict[str, float] = {
+    "showrunner": 0.25,
+    "writer": 0.8,
+    "dramaturg": 0.5,
+    "casting": 0.4,
+    "scene": 0.6,
+    "director": 0.5,
+    "editor": 0.15,
+    "qc": 0.05,
+    "curator": 0.25,
+    "critic": 0.05,
+}
+
+
+def _agent_temp_env_key(agent_name: str) -> str:
+    normalized = "".join(ch if ch.isalnum() else "_" for ch in (agent_name or "default"))
+    return f"LLM_TEMPERATURE_{normalized.upper()}"
+
+
+def _resolve_temperature(agent_name: str) -> float:
+    # Per-agent override wins (e.g., LLM_TEMPERATURE_WRITER).
+    value = os.getenv(_agent_temp_env_key(agent_name))
+    if value is not None:
+        return float(value)
+    return _DEFAULT_TEMPERATURES.get(agent_name, 0.1)
+
+
 @dataclass
 class LLMConfig:
+    agent_name: str = "default"
     model: str = os.getenv("LLM_MODEL", "Qwen/Qwen2.5-3B-Instruct")
     base_url: str = os.getenv("VLLM_BASE_URL", "http://localhost:8000/v1")
     api_key: str = os.getenv("VLLM_API_KEY", "EMPTY")
-    temperature: float = float(os.getenv("LLM_TEMPERATURE", "0.1"))
+    temperature: Optional[float] = None
     seed: Optional[int] = int(os.getenv("LLM_SEED", "42"))
     max_tokens: int = int(os.getenv("LLM_MAX_TOKENS", "2048"))
     json_only: bool = True
     timeout_sec: int = int(os.getenv("LLM_TIMEOUT_SEC", "60"))
 
+    def __post_init__(self) -> None:
+        if self.temperature is None:
+            self.temperature = _resolve_temperature(self.agent_name)
+
 
 class LLMClient:
     """vLLM OpenAI-compatible client."""
 
-    def __init__(self, config: Optional[LLMConfig] = None) -> None:
-        self.config = config or LLMConfig()
+    def __init__(self, config: Optional[LLMConfig] = None, agent_name: str = "default") -> None:
+        self.config = config or LLMConfig(agent_name=agent_name)
         self.last_raw: Optional[str] = None
         self.last_prompt: Optional[str] = None
         self.last_messages: Optional[list[dict[str, str]]] = None

@@ -26,7 +26,7 @@ def run(
     critic_feedback: str | None = None,
 ) -> Dict[str, Any]:
     """Pure function: input -> QC report."""
-    llm = llm or LLMClient()
+    llm = llm or LLMClient(agent_name="qc")
     prompt = PROMPT.format(input_json=input_data)
     if critic_feedback:
         prompt = (

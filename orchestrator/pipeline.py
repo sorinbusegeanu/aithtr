@@ -21,7 +21,7 @@ from agents.common import LLMClient
 
 from .mcp_clients import AssetClient, LipSyncClient, QCClient, RenderClient
 from .cache import StepCache
-from .tts_client import QwenTTSClient
+from .tts_client import XTTSClient
 from .audio_utils import build_segments
 from .validators import validate_screenplay, validate_cast_plan, validate_timeline_references, estimate_screenplay_duration_sec
 from .bibles import load_series_bible, load_character_bible, save_character_bible
@@ -62,14 +62,22 @@ class Orchestrator:
         self.cache = StepCache()
         self.render = RenderClient()
         self.qc = QCClient()
-        self.tts = QwenTTSClient()
+        self.tts = XTTSClient()
         self.lipsync = LipSyncClient()
-        self.llm = LLMClient()
+        self.llm_clients: Dict[str, LLMClient] = {}
         self.memory = MemoryClient()
         self.agent_retries = int(os.getenv("AGENT_RETRIES", "2"))
+        self.critic_retries = int(os.getenv("CRITIC_RETRIES", "3"))
         self.tool_retries = int(os.getenv("TOOL_RETRIES", "5"))
         self.screenplay_tolerance_sec = int(os.getenv("SCREENPLAY_DURATION_TOLERANCE_SEC", "15"))
         self.critic_gate_enabled = True
+
+    def _llm_for(self, agent_name: str) -> LLMClient:
+        llm = self.llm_clients.get(agent_name)
+        if llm is None:
+            llm = LLMClient(agent_name=agent_name)
+            self.llm_clients[agent_name] = llm
+        return llm
 
     def run_daily_episode(self, config: EpisodeConfig) -> Dict[str, Any]:
         episode_id = config.resume_run_id or _make_episode_id()
@@ -424,17 +432,18 @@ class Orchestrator:
             logger.write_json(os.path.join(step_dir, "input.json"), payload)
             logger.log(f"step:{name} input saved")
 
-        data = fn(payload, llm=self.llm)
+        step_llm = self._llm_for(name)
+        data = fn(payload, llm=step_llm)
         if name == "writer":
             data = _normalize_screenplay(data)
 
         if logger:
             step_dir = logger.step_dir(name)
             logger.write_json(os.path.join(step_dir, "raw.json"), {
-                "prompt": self.llm.last_prompt,
-                "raw": self.llm.last_raw,
+                "prompt": step_llm.last_prompt,
+                "raw": step_llm.last_raw,
             })
-            logger.log_chat(name, self.llm.last_messages, self.llm.last_raw)
+            logger.log_chat(name, step_llm.last_messages, step_llm.last_raw)
 
         if validator:
             errors = validator(data)
@@ -464,8 +473,9 @@ class Orchestrator:
         validator,
         logger: RunLogger | None = None,
     ) -> Dict[str, Any]:
+        step_llm = self._llm_for(name)
         for attempt in range(self.agent_retries):
-            fixed = self.llm.complete_json(
+            fixed = step_llm.complete_json(
                 _fix_prompt(
                     name=name,
                     input_json=payload,
@@ -475,7 +485,7 @@ class Orchestrator:
                 )
             )
             if logger:
-                logger.log_chat(f"{name}.fix", self.llm.last_messages, self.llm.last_raw)
+                logger.log_chat(f"{name}.fix", step_llm.last_messages, step_llm.last_raw)
             if name == "writer":
                 fixed = _normalize_screenplay(fixed)
             new_errors = validator(fixed)
@@ -524,19 +534,20 @@ class Orchestrator:
             )
             if review.get("passed", False):
                 return data
-            for attempt in range(1, self.agent_retries + 1):
+            for attempt in range(1, self.critic_retries + 1):
                 feedback = self._critic_feedback_text(review)
-                data = fn(payload, llm=self.llm, critic_feedback=feedback)
+                step_llm = self._llm_for(name)
+                data = fn(payload, llm=step_llm, critic_feedback=feedback)
                 if name == "writer":
                     data = _normalize_screenplay(data)
                 if logger:
-                    logger.log_chat(name, self.llm.last_messages, self.llm.last_raw)
+                    logger.log_chat(name, step_llm.last_messages, step_llm.last_raw)
                     logger.write_json(
                         os.path.join(logger.step_dir(name), f"critic_retry_{round_idx}_{attempt}.json"),
                         {
                             "critic_feedback": feedback,
-                            "prompt": self.llm.last_prompt,
-                            "raw": self.llm.last_raw,
+                            "prompt": step_llm.last_prompt,
+                            "raw": step_llm.last_raw,
                             "normalized": data,
                         },
                     )
@@ -564,7 +575,7 @@ class Orchestrator:
                 )
                 if review.get("passed", False):
                     return data
-            threshold -= 5
+            threshold -= 25
             round_idx += 1
         raise RuntimeError(f"{name} failed critic gate after retries; threshold dropped below 0")
 
@@ -580,13 +591,14 @@ class Orchestrator:
         round_idx: int = 0,
         attempt_in_round: int = 0,
     ) -> Dict[str, Any]:
+        critic_llm = self._llm_for("critic")
         review = critic_run(
             step_name=name,
             input_data=payload,
             output_data=data,
             schema_hint=AGENT_SCHEMA_HINTS.get(name, ""),
             validation_errors=errors,
-            llm=self.llm,
+            llm=critic_llm,
         )
         if threshold is None:
             try:
@@ -612,7 +624,7 @@ class Orchestrator:
             os.makedirs(critic_dir, exist_ok=True)
             suffix = "" if attempt == 0 else f"_retry_{attempt}"
             logger.write_json(os.path.join(critic_dir, f"review{suffix}.json"), review)
-            logger.log_chat(f"{name}.critic", self.llm.last_messages, self.llm.last_raw)
+            logger.log_chat(f"{name}.critic", critic_llm.last_messages, critic_llm.last_raw)
             logger.log(
                 "critic:"
                 + name
@@ -868,9 +880,10 @@ class Orchestrator:
             "Return JSON only with keys: summary, continuity_notes (array), character_state (object), tags (array).\n\n"
             f"{json.dumps(payload, ensure_ascii=True, indent=2)}"
         )
-        summary = self.llm.complete_json(prompt)
+        summary_llm = self._llm_for("curator")
+        summary = summary_llm.complete_json(prompt)
         if logger:
-            logger.log_chat("summary", self.llm.last_messages, self.llm.last_raw)
+            logger.log_chat("summary", summary_llm.last_messages, summary_llm.last_raw)
             logger.write_json(os.path.join(logger.run_dir, "episode_summary.json"), summary)
         return summary
 
