@@ -3,3 +3,6 @@ data/
 .pytest_cache/
 __pycache__/
 *.pyc
+
+.local_stack/
+temp/
