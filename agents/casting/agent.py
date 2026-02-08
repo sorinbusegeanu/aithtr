@@ -12,8 +12,13 @@ Input:
 
 Requirements:
 - Return JSON object with keys: cast_plan, cast_bible_update.
-- cast_plan: {{roles:[{{role, character_id, voice_id, avatar_id, emotion_map}}]}}
+- cast_plan: {{roles:[{{role, character_id, display_name, voice_id, voice_seed_text, voice_seed_seconds_target, avatar_id, emotion_map}}]}}
 - emotion_map maps emotion -> {{style, optional rate, pitch, energy}}.
+- role/display_name should cover the required cast roster from input constraints.
+- character_id should be a stable machine key; display_name should be human-readable.
+- voice_id must be an explicit Piper-compatible voice id (e.g. en_US-lessac-medium), never "voice-default".
+- voice_seed_text should be 60-120 words of clean spoken text (no SFX/stage directions/name prefixes).
+- voice_seed_seconds_target default: 10.
 - cast_bible_update: object (can be empty) with any new/updated character details.
 - No extra keys.
 """.strip()

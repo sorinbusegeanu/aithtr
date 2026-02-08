@@ -9,7 +9,7 @@ class RunLogger:
     def __init__(self, run_dir: str, transcript_path: Optional[str] = None) -> None:
         self.run_dir = run_dir
         os.makedirs(self.run_dir, exist_ok=True)
-        self.log_path = os.path.join(self.run_dir, "run.log")
+        self.log_path = os.path.join(self.run_dir, "episode.log")
         self.manifest_path = os.path.join(self.run_dir, "run_manifest.json")
         self.transcript_path = transcript_path
         if self.transcript_path:

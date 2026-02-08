@@ -1,6 +1,8 @@
 """Shared helpers for agent functions."""
 import json
 import os
+import re
+import urllib.error
 import urllib.request
 from dataclasses import dataclass
 from typing import Any, Dict, Optional
@@ -36,16 +38,24 @@ def _resolve_temperature(agent_name: str) -> float:
 @dataclass
 class LLMConfig:
     agent_name: str = "default"
-    model: str = os.getenv("LLM_MODEL", "Qwen/Qwen2.5-3B-Instruct")
+    model: Optional[str] = None
     base_url: str = os.getenv("VLLM_BASE_URL", "http://localhost:8000/v1")
     api_key: str = os.getenv("VLLM_API_KEY", "EMPTY")
     temperature: Optional[float] = None
     seed: Optional[int] = int(os.getenv("LLM_SEED", "42"))
     max_tokens: int = int(os.getenv("LLM_MAX_TOKENS", "2048"))
     json_only: bool = True
-    timeout_sec: int = int(os.getenv("LLM_TIMEOUT_SEC", "60"))
+    timeout_sec: int = int(os.getenv("LLM_TIMEOUT_SEC", "180"))
 
     def __post_init__(self) -> None:
+        if not self.model:
+            self.model = (
+                os.getenv("LLM_MODEL")
+                or os.getenv("VLLM_MODEL")
+                or "Qwen/Qwen2.5-3B-Instruct-AWQ"
+            )
+        if self.model == "Qwen/Qwen2.5-3B-Instruct":
+            self.model = "Qwen/Qwen2.5-3B-Instruct-AWQ"
         if self.temperature is None:
             self.temperature = _resolve_temperature(self.agent_name)
 
@@ -89,8 +99,28 @@ class LLMClient:
         req = urllib.request.Request(url, data=data, headers=headers)
         last_err: Optional[Exception] = None
         for attempt in range(3):
-            with urllib.request.urlopen(req, timeout=self.config.timeout_sec) as resp:
-                raw = resp.read().decode("utf-8")
+            try:
+                with urllib.request.urlopen(req, timeout=self.config.timeout_sec) as resp:
+                    raw = resp.read().decode("utf-8")
+            except urllib.error.HTTPError as err:
+                body = ""
+                try:
+                    body = err.read().decode("utf-8", errors="ignore")
+                except Exception:
+                    body = ""
+                # vLLM returns 400 when max_tokens is larger than remaining context.
+                # Retry with a reduced max_tokens instead of failing the whole step.
+                if err.code == 400:
+                    allowed = _extract_allowed_max_tokens(body)
+                    if allowed is not None and payload.get("max_tokens"):
+                        current = int(payload["max_tokens"])
+                        next_tokens = max(128, min(current // 2, allowed))
+                        if next_tokens < current:
+                            payload["max_tokens"] = next_tokens
+                            data = json.dumps(payload).encode("utf-8")
+                            req = urllib.request.Request(url, data=data, headers=headers)
+                            continue
+                raise
             self.last_raw = raw
 
             parsed = json.loads(raw)
@@ -179,3 +209,14 @@ def _extract_json(text: str) -> Optional[Dict[str, Any]]:
         return json.loads(text[start : end + 1])
     except Exception:
         return None
+
+
+def _extract_allowed_max_tokens(error_body: str) -> Optional[int]:
+    # Example:
+    # "... your request has 5580 input tokens (4096 > 8192 - 5580)."
+    m = re.search(r"\((\d+)\s*>\s*(\d+)\s*-\s*(\d+)\)", error_body)
+    if m:
+        total = int(m.group(2))
+        used = int(m.group(3))
+        return max(total - used, 1)
+    return None

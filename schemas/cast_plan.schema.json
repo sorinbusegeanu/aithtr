@@ -12,11 +12,14 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["role", "character_id", "voice_id", "avatar_id", "emotion_map"],
+        "required": ["role", "character_id", "display_name", "voice_id", "avatar_id", "emotion_map"],
         "properties": {
           "role": {"type": "string", "minLength": 1},
           "character_id": {"type": "string", "minLength": 1},
+          "display_name": {"type": "string", "minLength": 1},
           "voice_id": {"type": "string", "minLength": 1},
+          "voice_seed_text": {"type": "string", "minLength": 1},
+          "voice_seed_seconds_target": {"type": "number", "minimum": 1, "maximum": 60},
           "avatar_id": {"type": "string", "minLength": 1},
           "emotion_map": {
             "type": "object",

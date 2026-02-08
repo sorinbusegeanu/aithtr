@@ -4,6 +4,8 @@ services:
     gpus: all
     ports:
       - "8000:8000"
+    volumes:
+      - ./data/vllm-cache:/root/.cache/huggingface
     deploy:
       resources:
         reservations:
@@ -16,15 +18,17 @@ services:
       LD_PRELOAD: /lib/x86_64-linux-gnu/libcuda.so.1
     command:
       - "--model"
-      - "Qwen/Qwen2.5-3B-Instruct"
+      - "Qwen/Qwen2.5-3B-Instruct-AWQ"
+      - "--quantization"
+      - "awq"
       - "--host"
       - "0.0.0.0"
       - "--port"
       - "8000"
       - "--max-model-len"
-      - "32768"
+      - "8192"
       - "--gpu-memory-utilization"
-      - "0.8"
+      - "0.5"
     healthcheck:
       test: ["CMD-SHELL", "curl -fsS http://localhost:8000/v1/models >/dev/null"]
       interval: 10s
@@ -66,7 +70,8 @@ services:
       MCP_RENDER_URL: http://mcp-render:7105/mcp/sse
       MCP_QC_URL: http://mcp-qc:7106/mcp/sse
       VLLM_BASE_URL: http://vllm:8000/v1
-      LLM_MAX_TOKENS: "4096"
+      LLM_MODEL: Qwen/Qwen2.5-3B-Instruct-AWQ
+      LLM_MAX_TOKENS: "2048"
       LLM_TEMPERATURE_SHOWRUNNER: "${LLM_TEMPERATURE_SHOWRUNNER}"
       LLM_TEMPERATURE_WRITER: "${LLM_TEMPERATURE_WRITER}"
       LLM_TEMPERATURE_DRAMATURG: "${LLM_TEMPERATURE_DRAMATURG}"
@@ -79,7 +84,7 @@ services:
       LLM_TEMPERATURE_CRITIC: "${LLM_TEMPERATURE_CRITIC}"
       TOOL_RETRIES: "5"
       LLM_TIMEOUT_SEC: "180"
-      CRITIC_GATE_ENABLED: "0"
+      CRITIC_GATE_ENABLED: "1"
       DATA_ROOT: /data
       ORCH_CACHE_PATH: /data/artifacts/cache_index.json
       AGENT_RETRIES: "5"
@@ -140,6 +145,8 @@ services:
     gpus: all
     volumes:
       - ./data:/data
+      - ./data/tts-cache:/data/tts/cache
+      - ./data/tts-home:/root/.local/share/tts
     ports:
       - "7203:7203"
     environment:
@@ -148,6 +155,7 @@ services:
       XTTS_LANGUAGE: en
       COQUI_TOS_AGREED: "1"
       XTTS_SPEAKER_WAV_DIR: /data/tts/speakers
+      TTS_HOME: /root/.local/share/tts
       XDG_CACHE_HOME: /data/tts/cache
       HF_HOME: /data/tts/cache/hf
       HF_HUB_CACHE: /data/tts/cache/hf/hub
@@ -170,18 +178,29 @@ services:
       context: .
       dockerfile: mcp_servers/lipsync/Dockerfile
     user: "${UID}:${GID}"
+    gpus: all
     volumes:
       - ./data:/data
-      - ./data/models/wav2lip:/data/models/wav2lip
-      - ./data/models/wav2lip/s3fd-619a316812.pth:/opt/wav2lip/face_detection/detection/sfd/s3fd.pth
+      - ./data/models/Wav2Lip:/data/models/Wav2Lip
+      - ./data/models/Wav2Lip/checkpoints/s3fd.pth:/opt/wav2lip/face_detection/detection/sfd/s3fd.pth
     environment:
       MCP_TRANSPORT: "sse"
       MCP_HOST: "0.0.0.0"
       MCP_PORT: "7104"
       MCP_PATH: "/mcp"
-      WAV2LIP_CHECKPOINT: /data/models/wav2lip/wav2lip_gan.pth
+      WAV2LIP_SCRIPT: /data/models/Wav2Lip/inference.py
+      WAV2LIP_CHECKPOINT: /data/models/Wav2Lip/checkpoints/wav2lip_gan.pth
+      NVIDIA_VISIBLE_DEVICES: all
+      NUMBA_CACHE_DIR: /tmp/numba_cache
     ports:
       - "7104:7104"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: ["gpu"]
     healthcheck:
       test: ["CMD-SHELL", "python -c \"import socket; s=socket.create_connection(('localhost',7104),2); s.close()\""]
       interval: 10s

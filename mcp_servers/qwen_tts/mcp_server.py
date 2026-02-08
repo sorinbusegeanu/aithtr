@@ -54,6 +54,7 @@ def handle_rpc(payload: Dict[str, Any]) -> Dict[str, Any]:
         return service.tts_synthesize(
             text=args.get("text", ""),
             character_id=args.get("character_id", "unknown"),
+            voice_id=args.get("voice_id"),
             emotion=args.get("emotion", "neutral"),
             style=args.get("style"),
             output_format=args.get("output_format", "wav"),

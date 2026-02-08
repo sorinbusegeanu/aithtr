@@ -14,6 +14,7 @@ def main() -> int:
     result = service.tts_synthesize(
         text="Hello from Qwen TTS.",
         character_id="test_character",
+        voice_id="test_character",
         emotion="happy",
         style=None,
         output_format="wav",

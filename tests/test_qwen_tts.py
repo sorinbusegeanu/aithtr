@@ -65,6 +65,7 @@ def test_qwen_tts_smoke(tmp_path):
                 "arguments": {
                     "text": "Hello there",
                     "character_id": "char_1",
+                    "voice_id": "char_1",
                     "emotion": "neutral",
                     "style": None,
                     "output_format": "wav",

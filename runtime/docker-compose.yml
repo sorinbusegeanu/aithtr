@@ -2,8 +2,9 @@ version: "3.9"
 
 services:
   mcp-assets:
-    image: python:3.11-slim
-    working_dir: /app
+    build:
+      context: ..
+      dockerfile: mcp_servers/assets/Dockerfile
     volumes:
       - ..:/app
     environment:
@@ -11,13 +12,13 @@ services:
       MCP_HOST: "0.0.0.0"
       MCP_PORT: "7101"
       MCP_PATH: "/mcp"
-    command: ["bash", "-lc", "pip install --no-cache-dir mcp && python mcp_servers/assets/mcp_server.py"]
     ports:
       - "7101:7101"
 
   mcp-memory:
-    image: python:3.11-slim
-    working_dir: /app
+    build:
+      context: ..
+      dockerfile: mcp_servers/memory/Dockerfile
     volumes:
       - ..:/app
     environment:
@@ -25,13 +26,13 @@ services:
       MCP_HOST: "0.0.0.0"
       MCP_PORT: "7102"
       MCP_PATH: "/mcp"
-    command: ["bash", "-lc", "pip install --no-cache-dir mcp && python mcp_servers/memory/mcp_server.py"]
     ports:
       - "7102:7102"
 
   mcp-tts:
-    image: python:3.11-slim
-    working_dir: /app
+    build:
+      context: ..
+      dockerfile: mcp_servers/tts/Dockerfile
     volumes:
       - ..:/app
     environment:
@@ -39,13 +40,14 @@ services:
       MCP_HOST: "0.0.0.0"
       MCP_PORT: "7103"
       MCP_PATH: "/mcp"
-    command: ["bash", "-lc", "pip install --no-cache-dir mcp && python mcp_servers/tts/mcp_server.py"]
     ports:
       - "7103:7103"
 
   mcp-lipsync:
-    image: python:3.11-slim
-    working_dir: /app
+    build:
+      context: ..
+      dockerfile: mcp_servers/lipsync/Dockerfile
+    gpus: all
     volumes:
       - ..:/app
     environment:
@@ -53,13 +55,22 @@ services:
       MCP_HOST: "0.0.0.0"
       MCP_PORT: "7104"
       MCP_PATH: "/mcp"
-    command: ["bash", "-lc", "pip install --no-cache-dir mcp && python mcp_servers/lipsync/mcp_server.py"]
+      NVIDIA_VISIBLE_DEVICES: all
+      NUMBA_CACHE_DIR: /tmp/numba_cache
     ports:
       - "7104:7104"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: ["gpu"]
 
   mcp-render:
-    image: python:3.11-slim
-    working_dir: /app
+    build:
+      context: ..
+      dockerfile: mcp_servers/render/Dockerfile
     volumes:
       - ..:/app
     environment:
@@ -68,13 +79,13 @@ services:
       MCP_PORT: "7105"
       MCP_PATH: "/mcp"
       FFMPEG_BIN: "ffmpeg"
-    command: ["bash", "-lc", "apt-get update && apt-get install -y ffmpeg && pip install --no-cache-dir mcp && python mcp_servers/render/mcp_server.py"]
     ports:
       - "7105:7105"
 
   mcp-qc:
-    image: python:3.11-slim
-    working_dir: /app
+    build:
+      context: ..
+      dockerfile: mcp_servers/qc/Dockerfile
     volumes:
       - ..:/app
     environment:
@@ -84,6 +95,5 @@ services:
       MCP_PATH: "/mcp"
       FFMPEG_BIN: "ffmpeg"
       FFPROBE_BIN: "ffprobe"
-    command: ["bash", "-lc", "apt-get update && apt-get install -y ffmpeg && pip install --no-cache-dir mcp && python mcp_servers/qc/mcp_server.py"]
     ports:
       - "7106:7106"

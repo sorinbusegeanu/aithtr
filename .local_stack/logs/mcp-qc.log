@@ -1,0 +1,447 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/zodrak/AITHTR/aithtr/mcp_servers/qc/mcp_server.py", line 5, in <module>
+    from mcp.server.fastmcp import FastMCP
+ModuleNotFoundError: No module named 'mcp'
+INFO:     Started server process [743766]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    could not bind on any address out of [('0.0.0.0', 7106)]
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [747784]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:7106 (Press CTRL+C to quit)
+INFO:     127.0.0.1:54110 - "GET /mcp/sse HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [747784]
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/zodrak/AITHTR/aithtr/mcp_servers/qc/mcp_server.py", line 5, in <module>
+    from mcp.server.fastmcp import FastMCP
+ModuleNotFoundError: No module named 'mcp'
+INFO:     Started server process [788036]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:7106 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [788036]
+INFO:     Started server process [792803]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:7106 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [792803]
+INFO:     Started server process [805106]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:7106 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [805106]
+INFO:     Started server process [821065]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:7106 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [821065]
+INFO:     Started server process [826156]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:7106 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [826156]
+INFO:     Started server process [832978]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:7106 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [832978]
+INFO:     Started server process [7820]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:7106 (Press CTRL+C to quit)
+INFO:     127.0.0.1:34648 - "GET /mcp/sse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34650 - "POST /mcp/messages/?session_id=866d29e800254ac5a9c14460b77a7f06 HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:34650 - "POST /mcp/messages/?session_id=866d29e800254ac5a9c14460b77a7f06 HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:34650 - "POST /mcp/messages/?session_id=866d29e800254ac5a9c14460b77a7f06 HTTP/1.1" 202 Accepted
+[02/07/26 17:26:12] INFO     Processing request of type            server.py:720
+                             CallToolRequest                                    
+INFO:     127.0.0.1:36904 - "GET /mcp/sse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36906 - "POST /mcp/messages/?session_id=71a2e9c0204342caa0f2670f630453c9 HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:36906 - "POST /mcp/messages/?session_id=71a2e9c0204342caa0f2670f630453c9 HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:36906 - "POST /mcp/messages/?session_id=71a2e9c0204342caa0f2670f630453c9 HTTP/1.1" 202 Accepted
+[02/07/26 17:26:14] INFO     Processing request of type            server.py:720
+                             CallToolRequest                                    
+INFO:     127.0.0.1:36922 - "GET /mcp/sse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36926 - "POST /mcp/messages/?session_id=0932948d6702433c96a4ff31cd8a9492 HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:36926 - "POST /mcp/messages/?session_id=0932948d6702433c96a4ff31cd8a9492 HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:36926 - "POST /mcp/messages/?session_id=0932948d6702433c96a4ff31cd8a9492 HTTP/1.1" 202 Accepted
+[02/07/26 17:26:16] INFO     Processing request of type            server.py:720
+                             CallToolRequest                                    
+INFO:     127.0.0.1:36928 - "GET /mcp/sse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36930 - "POST /mcp/messages/?session_id=90a8d4833a3b4cbe8abd8232e1c53d34 HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:36930 - "POST /mcp/messages/?session_id=90a8d4833a3b4cbe8abd8232e1c53d34 HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:36930 - "POST /mcp/messages/?session_id=90a8d4833a3b4cbe8abd8232e1c53d34 HTTP/1.1" 202 Accepted
+[02/07/26 17:26:18] INFO     Processing request of type            server.py:720
+                             CallToolRequest                                    
+INFO:     127.0.0.1:36944 - "GET /mcp/sse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36954 - "POST /mcp/messages/?session_id=d90308b25aeb4731ad30889b3e71978b HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:36954 - "POST /mcp/messages/?session_id=d90308b25aeb4731ad30889b3e71978b HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:36954 - "POST /mcp/messages/?session_id=d90308b25aeb4731ad30889b3e71978b HTTP/1.1" 202 Accepted
+[02/07/26 17:26:20] INFO     Processing request of type            server.py:720
+                             CallToolRequest                                    
+INFO:     127.0.0.1:36958 - "GET /mcp/sse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36968 - "POST /mcp/messages/?session_id=038bfd5b61ad4d9f93f4f2bd3449e03c HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:36968 - "POST /mcp/messages/?session_id=038bfd5b61ad4d9f93f4f2bd3449e03c HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:36968 - "POST /mcp/messages/?session_id=038bfd5b61ad4d9f93f4f2bd3449e03c HTTP/1.1" 202 Accepted
+[02/07/26 17:26:22] INFO     Processing request of type            server.py:720
+                             CallToolRequest                                    
+INFO:     127.0.0.1:55430 - "GET /mcp/sse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55444 - "POST /mcp/messages/?session_id=82ade1d7129f408ab3851e345d729bab HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:55444 - "POST /mcp/messages/?session_id=82ade1d7129f408ab3851e345d729bab HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:55444 - "POST /mcp/messages/?session_id=82ade1d7129f408ab3851e345d729bab HTTP/1.1" 202 Accepted
+[02/07/26 17:27:14] INFO     Processing request of type            server.py:720
+                             CallToolRequest                                    
+INFO:     127.0.0.1:55456 - "GET /mcp/sse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55468 - "POST /mcp/messages/?session_id=ed24ddb250744b0488277f9d03108710 HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:55468 - "POST /mcp/messages/?session_id=ed24ddb250744b0488277f9d03108710 HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:55468 - "POST /mcp/messages/?session_id=ed24ddb250744b0488277f9d03108710 HTTP/1.1" 202 Accepted
+[02/07/26 17:27:16] INFO     Processing request of type            server.py:720
+                             CallToolRequest                                    
+INFO:     127.0.0.1:55476 - "GET /mcp/sse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55478 - "POST /mcp/messages/?session_id=7d1f6984c4bc4236a4cd8761631780ff HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:55478 - "POST /mcp/messages/?session_id=7d1f6984c4bc4236a4cd8761631780ff HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:55478 - "POST /mcp/messages/?session_id=7d1f6984c4bc4236a4cd8761631780ff HTTP/1.1" 202 Accepted
+[02/07/26 17:27:18] INFO     Processing request of type            server.py:720
+                             CallToolRequest                                    
+INFO:     127.0.0.1:55484 - "GET /mcp/sse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55494 - "POST /mcp/messages/?session_id=8625ba9c4de64fe7893d0a5eb59ca971 HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:55494 - "POST /mcp/messages/?session_id=8625ba9c4de64fe7893d0a5eb59ca971 HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:55494 - "POST /mcp/messages/?session_id=8625ba9c4de64fe7893d0a5eb59ca971 HTTP/1.1" 202 Accepted
+[02/07/26 17:27:20] INFO     Processing request of type            server.py:720
+                             CallToolRequest                                    
+INFO:     127.0.0.1:55496 - "GET /mcp/sse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55506 - "POST /mcp/messages/?session_id=1bba6e1f622e4709ab74ffc0ded1f07e HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:55506 - "POST /mcp/messages/?session_id=1bba6e1f622e4709ab74ffc0ded1f07e HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:55506 - "POST /mcp/messages/?session_id=1bba6e1f622e4709ab74ffc0ded1f07e HTTP/1.1" 202 Accepted
+[02/07/26 17:27:22] INFO     Processing request of type            server.py:720
+                             CallToolRequest                                    
+INFO:     127.0.0.1:39396 - "GET /mcp/sse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39400 - "POST /mcp/messages/?session_id=e204fbb99a1d4a5ebba01a05c3c6e7d3 HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:39400 - "POST /mcp/messages/?session_id=e204fbb99a1d4a5ebba01a05c3c6e7d3 HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:39400 - "POST /mcp/messages/?session_id=e204fbb99a1d4a5ebba01a05c3c6e7d3 HTTP/1.1" 202 Accepted
+[02/07/26 17:27:24] INFO     Processing request of type            server.py:720
+                             CallToolRequest                                    
+INFO:     127.0.0.1:39402 - "GET /mcp/sse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39416 - "POST /mcp/messages/?session_id=468c33ba7c2f4ed88e04264fa0bcf8e2 HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:39416 - "POST /mcp/messages/?session_id=468c33ba7c2f4ed88e04264fa0bcf8e2 HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:39416 - "POST /mcp/messages/?session_id=468c33ba7c2f4ed88e04264fa0bcf8e2 HTTP/1.1" 202 Accepted
+[02/07/26 17:27:26] INFO     Processing request of type            server.py:720
+                             CallToolRequest                                    
+INFO:     127.0.0.1:39422 - "GET /mcp/sse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39424 - "POST /mcp/messages/?session_id=ce90f0349b8c49f8a3d8859f05d0dc70 HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:39424 - "POST /mcp/messages/?session_id=ce90f0349b8c49f8a3d8859f05d0dc70 HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:39424 - "POST /mcp/messages/?session_id=ce90f0349b8c49f8a3d8859f05d0dc70 HTTP/1.1" 202 Accepted
+[02/07/26 17:27:28] INFO     Processing request of type            server.py:720
+                             CallToolRequest                                    
+INFO:     127.0.0.1:39430 - "GET /mcp/sse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39444 - "POST /mcp/messages/?session_id=0cd4a2d5c99440fa9756eb1289350ac7 HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:39444 - "POST /mcp/messages/?session_id=0cd4a2d5c99440fa9756eb1289350ac7 HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:39444 - "POST /mcp/messages/?session_id=0cd4a2d5c99440fa9756eb1289350ac7 HTTP/1.1" 202 Accepted
+[02/07/26 17:27:30] INFO     Processing request of type            server.py:720
+                             CallToolRequest                                    
+INFO:     127.0.0.1:39450 - "GET /mcp/sse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39456 - "POST /mcp/messages/?session_id=f944e0ba7dfb4a4f8f79cf468cc32d92 HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:39456 - "POST /mcp/messages/?session_id=f944e0ba7dfb4a4f8f79cf468cc32d92 HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:39456 - "POST /mcp/messages/?session_id=f944e0ba7dfb4a4f8f79cf468cc32d92 HTTP/1.1" 202 Accepted
+[02/07/26 17:27:32] INFO     Processing request of type            server.py:720
+                             CallToolRequest                                    
+INFO:     127.0.0.1:35532 - "GET /mcp/sse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35540 - "POST /mcp/messages/?session_id=452158082aa5445fadb8f38fac897ad1 HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:35540 - "POST /mcp/messages/?session_id=452158082aa5445fadb8f38fac897ad1 HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:35540 - "POST /mcp/messages/?session_id=452158082aa5445fadb8f38fac897ad1 HTTP/1.1" 202 Accepted
+[02/07/26 17:27:34] INFO     Processing request of type            server.py:720
+                             CallToolRequest                                    
+INFO:     127.0.0.1:35550 - "GET /mcp/sse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35560 - "POST /mcp/messages/?session_id=388de4ee143646768743bed9fdb831c4 HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:35560 - "POST /mcp/messages/?session_id=388de4ee143646768743bed9fdb831c4 HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:35560 - "POST /mcp/messages/?session_id=388de4ee143646768743bed9fdb831c4 HTTP/1.1" 202 Accepted
+[02/07/26 17:27:36] INFO     Processing request of type            server.py:720
+                             CallToolRequest                                    
+INFO:     127.0.0.1:43380 - "GET /mcp/sse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43388 - "POST /mcp/messages/?session_id=78a671fe31d04396991e7117a62b8380 HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:43388 - "POST /mcp/messages/?session_id=78a671fe31d04396991e7117a62b8380 HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:43388 - "POST /mcp/messages/?session_id=78a671fe31d04396991e7117a62b8380 HTTP/1.1" 202 Accepted
+[02/07/26 17:50:51] INFO     Processing request of type            server.py:720
+                             CallToolRequest                                    
+INFO:     127.0.0.1:34552 - "GET /mcp/sse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34562 - "POST /mcp/messages/?session_id=2a9a71f0255042d9866a0c63660fb1f0 HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:34562 - "POST /mcp/messages/?session_id=2a9a71f0255042d9866a0c63660fb1f0 HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:34562 - "POST /mcp/messages/?session_id=2a9a71f0255042d9866a0c63660fb1f0 HTTP/1.1" 202 Accepted
+[02/07/26 17:50:53] INFO     Processing request of type            server.py:720
+                             CallToolRequest                                    
+INFO:     127.0.0.1:34574 - "GET /mcp/sse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34578 - "POST /mcp/messages/?session_id=39743d3cca5040bba7b5563c7b2e8c77 HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:34578 - "POST /mcp/messages/?session_id=39743d3cca5040bba7b5563c7b2e8c77 HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:34578 - "POST /mcp/messages/?session_id=39743d3cca5040bba7b5563c7b2e8c77 HTTP/1.1" 202 Accepted
+[02/07/26 17:50:55] INFO     Processing request of type            server.py:720
+                             CallToolRequest                                    
+INFO:     127.0.0.1:34582 - "GET /mcp/sse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34584 - "POST /mcp/messages/?session_id=7fd78b46250044878ceb42d6fdf6ecaa HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:34584 - "POST /mcp/messages/?session_id=7fd78b46250044878ceb42d6fdf6ecaa HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:34584 - "POST /mcp/messages/?session_id=7fd78b46250044878ceb42d6fdf6ecaa HTTP/1.1" 202 Accepted
+[02/07/26 17:50:57] INFO     Processing request of type            server.py:720
+                             CallToolRequest                                    
+INFO:     127.0.0.1:34594 - "GET /mcp/sse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34600 - "POST /mcp/messages/?session_id=5b7656b2901542e8a286d914b23a5ef8 HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:34600 - "POST /mcp/messages/?session_id=5b7656b2901542e8a286d914b23a5ef8 HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:34600 - "POST /mcp/messages/?session_id=5b7656b2901542e8a286d914b23a5ef8 HTTP/1.1" 202 Accepted
+[02/07/26 17:50:59] INFO     Processing request of type            server.py:720
+                             CallToolRequest                                    
+INFO:     127.0.0.1:34612 - "GET /mcp/sse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34624 - "POST /mcp/messages/?session_id=c86bd96c776847b9bfb9574ddebb63da HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:34624 - "POST /mcp/messages/?session_id=c86bd96c776847b9bfb9574ddebb63da HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:34624 - "POST /mcp/messages/?session_id=c86bd96c776847b9bfb9574ddebb63da HTTP/1.1" 202 Accepted
+[02/07/26 17:51:01] INFO     Processing request of type            server.py:720
+                             CallToolRequest                                    
+INFO:     127.0.0.1:41922 - "GET /mcp/sse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41934 - "POST /mcp/messages/?session_id=fc93410b8fa343e68bf60fdc3d148cf5 HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:41934 - "POST /mcp/messages/?session_id=fc93410b8fa343e68bf60fdc3d148cf5 HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:41934 - "POST /mcp/messages/?session_id=fc93410b8fa343e68bf60fdc3d148cf5 HTTP/1.1" 202 Accepted
+[02/07/26 17:51:03] INFO     Processing request of type            server.py:720
+                             CallToolRequest                                    
+INFO:     127.0.0.1:41938 - "GET /mcp/sse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41950 - "POST /mcp/messages/?session_id=dd944e4ab8ad49638e1d9d55cb57aa26 HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:41950 - "POST /mcp/messages/?session_id=dd944e4ab8ad49638e1d9d55cb57aa26 HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:41950 - "POST /mcp/messages/?session_id=dd944e4ab8ad49638e1d9d55cb57aa26 HTTP/1.1" 202 Accepted
+[02/07/26 17:51:05] INFO     Processing request of type            server.py:720
+                             CallToolRequest                                    
+INFO:     127.0.0.1:41954 - "GET /mcp/sse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41970 - "POST /mcp/messages/?session_id=12accc4160ed415390903baa858c26bc HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:41970 - "POST /mcp/messages/?session_id=12accc4160ed415390903baa858c26bc HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:41970 - "POST /mcp/messages/?session_id=12accc4160ed415390903baa858c26bc HTTP/1.1" 202 Accepted
+[02/07/26 17:51:07] INFO     Processing request of type            server.py:720
+                             CallToolRequest                                    
+INFO:     127.0.0.1:41980 - "GET /mcp/sse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41984 - "POST /mcp/messages/?session_id=b92dd75cf4bf4db192888c9ac5dd2450 HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:41984 - "POST /mcp/messages/?session_id=b92dd75cf4bf4db192888c9ac5dd2450 HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:41984 - "POST /mcp/messages/?session_id=b92dd75cf4bf4db192888c9ac5dd2450 HTTP/1.1" 202 Accepted
+[02/07/26 17:51:09] INFO     Processing request of type            server.py:720
+                             CallToolRequest                                    
+INFO:     127.0.0.1:41992 - "GET /mcp/sse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42002 - "POST /mcp/messages/?session_id=f9a222f1d42d49d4b8403a104117dc8c HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:42002 - "POST /mcp/messages/?session_id=f9a222f1d42d49d4b8403a104117dc8c HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:42002 - "POST /mcp/messages/?session_id=f9a222f1d42d49d4b8403a104117dc8c HTTP/1.1" 202 Accepted
+[02/07/26 17:51:11] INFO     Processing request of type            server.py:720
+                             CallToolRequest                                    
+INFO:     127.0.0.1:37450 - "GET /mcp/sse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37460 - "POST /mcp/messages/?session_id=7606e8a49641464eae3c51ba95667abc HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:37460 - "POST /mcp/messages/?session_id=7606e8a49641464eae3c51ba95667abc HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:37460 - "POST /mcp/messages/?session_id=7606e8a49641464eae3c51ba95667abc HTTP/1.1" 202 Accepted
+[02/07/26 17:51:13] INFO     Processing request of type            server.py:720
+                             CallToolRequest                                    
+INFO:     127.0.0.1:55096 - "GET /mcp/sse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55106 - "POST /mcp/messages/?session_id=5db2cf443cca4c91a9fd99c380aca2e0 HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:55106 - "POST /mcp/messages/?session_id=5db2cf443cca4c91a9fd99c380aca2e0 HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:55106 - "POST /mcp/messages/?session_id=5db2cf443cca4c91a9fd99c380aca2e0 HTTP/1.1" 202 Accepted
+[02/07/26 18:09:51] INFO     Processing request of type            server.py:720
+                             CallToolRequest                                    
+INFO:     127.0.0.1:55106 - "POST /mcp/messages/?session_id=5db2cf443cca4c91a9fd99c380aca2e0 HTTP/1.1" 202 Accepted
+                    INFO     Processing request of type            server.py:720
+                             ListToolsRequest                                   
+INFO:     127.0.0.1:55120 - "GET /mcp/sse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55130 - "POST /mcp/messages/?session_id=c183fed1dc9546fcb7360c1f5cafeed5 HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:55130 - "POST /mcp/messages/?session_id=c183fed1dc9546fcb7360c1f5cafeed5 HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:55130 - "POST /mcp/messages/?session_id=c183fed1dc9546fcb7360c1f5cafeed5 HTTP/1.1" 202 Accepted
+                    INFO     Processing request of type            server.py:720
+                             CallToolRequest                                    
+INFO:     127.0.0.1:55130 - "POST /mcp/messages/?session_id=c183fed1dc9546fcb7360c1f5cafeed5 HTTP/1.1" 202 Accepted
+[02/07/26 18:09:52] INFO     Processing request of type            server.py:720
+                             ListToolsRequest                                   
+INFO:     127.0.0.1:53048 - "GET /mcp/sse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53054 - "POST /mcp/messages/?session_id=77b94614093c4950b7d76ace7cc9ce51 HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:53054 - "POST /mcp/messages/?session_id=77b94614093c4950b7d76ace7cc9ce51 HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:53054 - "POST /mcp/messages/?session_id=77b94614093c4950b7d76ace7cc9ce51 HTTP/1.1" 202 Accepted
+[02/07/26 18:17:07] INFO     Processing request of type            server.py:720
+                             CallToolRequest                                    
+INFO:     127.0.0.1:53054 - "POST /mcp/messages/?session_id=77b94614093c4950b7d76ace7cc9ce51 HTTP/1.1" 202 Accepted
+                    INFO     Processing request of type            server.py:720
+                             ListToolsRequest                                   
+INFO:     127.0.0.1:53070 - "GET /mcp/sse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53076 - "POST /mcp/messages/?session_id=98b270673ad947c4b51063b37151bd18 HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:53076 - "POST /mcp/messages/?session_id=98b270673ad947c4b51063b37151bd18 HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:53076 - "POST /mcp/messages/?session_id=98b270673ad947c4b51063b37151bd18 HTTP/1.1" 202 Accepted
+                    INFO     Processing request of type            server.py:720
+                             CallToolRequest                                    
+INFO:     127.0.0.1:53076 - "POST /mcp/messages/?session_id=98b270673ad947c4b51063b37151bd18 HTTP/1.1" 202 Accepted
+                    INFO     Processing request of type            server.py:720
+                             ListToolsRequest                                   
+INFO:     127.0.0.1:32786 - "GET /mcp/sse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:32792 - "POST /mcp/messages/?session_id=71907ce09f5d4c65ad7181cee2c3e183 HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:32792 - "POST /mcp/messages/?session_id=71907ce09f5d4c65ad7181cee2c3e183 HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:32792 - "POST /mcp/messages/?session_id=71907ce09f5d4c65ad7181cee2c3e183 HTTP/1.1" 202 Accepted
+[02/07/26 18:23:32] INFO     Processing request of type            server.py:720
+                             CallToolRequest                                    
+INFO:     127.0.0.1:32792 - "POST /mcp/messages/?session_id=71907ce09f5d4c65ad7181cee2c3e183 HTTP/1.1" 202 Accepted
+[02/07/26 18:23:33] INFO     Processing request of type            server.py:720
+                             ListToolsRequest                                   
+INFO:     127.0.0.1:33732 - "GET /mcp/sse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33736 - "POST /mcp/messages/?session_id=d412c200eb8346b5af76b2444bad4edc HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:33736 - "POST /mcp/messages/?session_id=d412c200eb8346b5af76b2444bad4edc HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:33736 - "POST /mcp/messages/?session_id=d412c200eb8346b5af76b2444bad4edc HTTP/1.1" 202 Accepted
+                    INFO     Processing request of type            server.py:720
+                             CallToolRequest                                    
+INFO:     127.0.0.1:33736 - "POST /mcp/messages/?session_id=d412c200eb8346b5af76b2444bad4edc HTTP/1.1" 202 Accepted
+                    INFO     Processing request of type            server.py:720
+                             ListToolsRequest                                   
+INFO:     127.0.0.1:51162 - "GET /mcp/sse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51176 - "POST /mcp/messages/?session_id=68bf1258349048378ce261f62197e250 HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:51176 - "POST /mcp/messages/?session_id=68bf1258349048378ce261f62197e250 HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:51176 - "POST /mcp/messages/?session_id=68bf1258349048378ce261f62197e250 HTTP/1.1" 202 Accepted
+[02/07/26 18:25:44] INFO     Processing request of type            server.py:720
+                             CallToolRequest                                    
+INFO:     127.0.0.1:51176 - "POST /mcp/messages/?session_id=68bf1258349048378ce261f62197e250 HTTP/1.1" 202 Accepted
+[02/07/26 18:25:45] INFO     Processing request of type            server.py:720
+                             ListToolsRequest                                   
+INFO:     127.0.0.1:51180 - "GET /mcp/sse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51186 - "POST /mcp/messages/?session_id=eda55555a58345f3b4cc9d91099c365a HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:51186 - "POST /mcp/messages/?session_id=eda55555a58345f3b4cc9d91099c365a HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:51186 - "POST /mcp/messages/?session_id=eda55555a58345f3b4cc9d91099c365a HTTP/1.1" 202 Accepted
+                    INFO     Processing request of type            server.py:720
+                             CallToolRequest                                    
+INFO:     127.0.0.1:51186 - "POST /mcp/messages/?session_id=eda55555a58345f3b4cc9d91099c365a HTTP/1.1" 202 Accepted
+                    INFO     Processing request of type            server.py:720
+                             ListToolsRequest                                   
+INFO:     127.0.0.1:43174 - "GET /mcp/sse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43182 - "POST /mcp/messages/?session_id=ed097a08ec2940219e621a49476bf6f6 HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:43182 - "POST /mcp/messages/?session_id=ed097a08ec2940219e621a49476bf6f6 HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:43182 - "POST /mcp/messages/?session_id=ed097a08ec2940219e621a49476bf6f6 HTTP/1.1" 202 Accepted
+[02/07/26 18:26:48] INFO     Processing request of type            server.py:720
+                             CallToolRequest                                    
+INFO:     127.0.0.1:43182 - "POST /mcp/messages/?session_id=ed097a08ec2940219e621a49476bf6f6 HTTP/1.1" 202 Accepted
+[02/07/26 18:26:49] INFO     Processing request of type            server.py:720
+                             ListToolsRequest                                   
+INFO:     127.0.0.1:43186 - "GET /mcp/sse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43200 - "POST /mcp/messages/?session_id=8759315114d34401b4546083e32915aa HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:43200 - "POST /mcp/messages/?session_id=8759315114d34401b4546083e32915aa HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:43200 - "POST /mcp/messages/?session_id=8759315114d34401b4546083e32915aa HTTP/1.1" 202 Accepted
+                    INFO     Processing request of type            server.py:720
+                             CallToolRequest                                    
+INFO:     127.0.0.1:43200 - "POST /mcp/messages/?session_id=8759315114d34401b4546083e32915aa HTTP/1.1" 202 Accepted
+                    INFO     Processing request of type            server.py:720
+                             ListToolsRequest                                   
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [7820]
+INFO:     Started server process [55118]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:7106 (Press CTRL+C to quit)
+INFO:     Started server process [61842]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:7106 (Press CTRL+C to quit)
+INFO:     Started server process [65711]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:7106 (Press CTRL+C to quit)
+INFO:     Started server process [67941]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:7106 (Press CTRL+C to quit)
+INFO:     Started server process [69010]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:7106 (Press CTRL+C to quit)
+INFO:     Started server process [74533]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:7106 (Press CTRL+C to quit)
+INFO:     127.0.0.1:53740 - "GET /mcp/sse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53756 - "POST /mcp/messages/?session_id=dc0c32cd24f54d12900a9af2efb1c56c HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:53756 - "POST /mcp/messages/?session_id=dc0c32cd24f54d12900a9af2efb1c56c HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:53756 - "POST /mcp/messages/?session_id=dc0c32cd24f54d12900a9af2efb1c56c HTTP/1.1" 202 Accepted
+[02/07/26 19:31:56] INFO     Processing request of type            server.py:720
+                             CallToolRequest                                    
+INFO:     127.0.0.1:53756 - "POST /mcp/messages/?session_id=dc0c32cd24f54d12900a9af2efb1c56c HTTP/1.1" 202 Accepted
+                    INFO     Processing request of type            server.py:720
+                             ListToolsRequest                                   
+INFO:     127.0.0.1:53770 - "GET /mcp/sse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53786 - "POST /mcp/messages/?session_id=8a01811745344a28995b98df15ce9b0b HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:53786 - "POST /mcp/messages/?session_id=8a01811745344a28995b98df15ce9b0b HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:53786 - "POST /mcp/messages/?session_id=8a01811745344a28995b98df15ce9b0b HTTP/1.1" 202 Accepted
+[02/07/26 19:31:57] INFO     Processing request of type            server.py:720
+                             CallToolRequest                                    
+INFO:     127.0.0.1:53786 - "POST /mcp/messages/?session_id=8a01811745344a28995b98df15ce9b0b HTTP/1.1" 202 Accepted
+                    INFO     Processing request of type            server.py:720
+                             ListToolsRequest                                   
+INFO:     127.0.0.1:47586 - "GET /mcp/sse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47590 - "POST /mcp/messages/?session_id=c1d6ddfcec894556a8fc009dfa90f1ae HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:47590 - "POST /mcp/messages/?session_id=c1d6ddfcec894556a8fc009dfa90f1ae HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:47590 - "POST /mcp/messages/?session_id=c1d6ddfcec894556a8fc009dfa90f1ae HTTP/1.1" 202 Accepted
+[02/07/26 19:37:30] INFO     Processing request of type            server.py:720
+                             CallToolRequest                                    
+INFO:     127.0.0.1:47590 - "POST /mcp/messages/?session_id=c1d6ddfcec894556a8fc009dfa90f1ae HTTP/1.1" 202 Accepted
+[02/07/26 19:37:31] INFO     Processing request of type            server.py:720
+                             ListToolsRequest                                   
+INFO:     127.0.0.1:47600 - "GET /mcp/sse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47610 - "POST /mcp/messages/?session_id=69acafec827b4de6b07a1ec4c3294aa0 HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:47610 - "POST /mcp/messages/?session_id=69acafec827b4de6b07a1ec4c3294aa0 HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:47610 - "POST /mcp/messages/?session_id=69acafec827b4de6b07a1ec4c3294aa0 HTTP/1.1" 202 Accepted
+                    INFO     Processing request of type            server.py:720
+                             CallToolRequest                                    
+INFO:     127.0.0.1:47610 - "POST /mcp/messages/?session_id=69acafec827b4de6b07a1ec4c3294aa0 HTTP/1.1" 202 Accepted
+                    INFO     Processing request of type            server.py:720
+                             ListToolsRequest                                   
+INFO:     Started server process [7729]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:7106 (Press CTRL+C to quit)
+INFO:     127.0.0.1:36990 - "GET /mcp/sse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37000 - "POST /mcp/messages/?session_id=ee210d08c2c64978889947a420425cf1 HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:37000 - "POST /mcp/messages/?session_id=ee210d08c2c64978889947a420425cf1 HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:37000 - "POST /mcp/messages/?session_id=ee210d08c2c64978889947a420425cf1 HTTP/1.1" 202 Accepted
+[02/08/26 09:48:20] INFO     Processing request of type            server.py:720
+                             CallToolRequest                                    
+INFO:     127.0.0.1:37000 - "POST /mcp/messages/?session_id=ee210d08c2c64978889947a420425cf1 HTTP/1.1" 202 Accepted
+                    INFO     Processing request of type            server.py:720
+                             ListToolsRequest                                   
+INFO:     127.0.0.1:37006 - "GET /mcp/sse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37008 - "POST /mcp/messages/?session_id=35617c3523bf48128b42d6dd0506ca15 HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:37008 - "POST /mcp/messages/?session_id=35617c3523bf48128b42d6dd0506ca15 HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:37008 - "POST /mcp/messages/?session_id=35617c3523bf48128b42d6dd0506ca15 HTTP/1.1" 202 Accepted
+                    INFO     Processing request of type            server.py:720
+                             CallToolRequest                                    
+INFO:     127.0.0.1:37008 - "POST /mcp/messages/?session_id=35617c3523bf48128b42d6dd0506ca15 HTTP/1.1" 202 Accepted
+[02/08/26 09:48:21] INFO     Processing request of type            server.py:720
+                             ListToolsRequest                                   
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [7729]
+INFO:     Started server process [12241]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:7106 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [12241]

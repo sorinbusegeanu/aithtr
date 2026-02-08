@@ -4,10 +4,13 @@ FFmpeg timeline renderer with optional ASR subtitle burn-in.
 import json
 import math
 import os
+import shutil
 import subprocess
 import tempfile
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, Tuple
+
+import cv2
 
 from mcp_servers.assets.artifact_store import ArtifactStore
 
@@ -41,6 +44,19 @@ class RenderService:
             timeline = json.load(f)
 
         settings = self._settings(preset)
+        ffmpeg_bin = os.getenv("FFMPEG_BIN", "ffmpeg")
+        if shutil.which(ffmpeg_bin) is None:
+            allow_fallback = os.getenv("RENDER_ALLOW_NOFFMPEG_FALLBACK", "0").strip().lower() in {
+                "1",
+                "true",
+                "yes",
+                "on",
+            }
+            if not allow_fallback:
+                raise FileNotFoundError("ffmpeg not found and RENDER_ALLOW_NOFFMPEG_FALLBACK is disabled")
+            artifact_id = self._render_fallback_without_ffmpeg(timeline=timeline, settings=settings, preset=preset)
+            return {"artifact_id": artifact_id, "preset": preset, "fallback": "opencv_no_ffmpeg"}
+
         with tempfile.TemporaryDirectory() as tmpdir:
             scene_outputs: List[str] = []
             for idx, scene in enumerate(timeline.get("scenes", [])):
@@ -67,6 +83,82 @@ class RenderService:
         artifact_id = self.store.put(data=data, content_type="video/mp4", tags=["render", preset])
         return {"artifact_id": artifact_id, "preset": preset}
 
+    def _render_fallback_without_ffmpeg(self, timeline: Dict[str, Any], settings: RenderSettings, preset: str) -> str:
+        scenes = timeline.get("scenes", [])
+        if not scenes:
+            raise ValueError("timeline has no scenes")
+
+        with tempfile.NamedTemporaryFile(suffix=".mp4", delete=False) as tmp:
+            out_path = tmp.name
+
+        try:
+            writer = cv2.VideoWriter(
+                out_path,
+                cv2.VideoWriter_fourcc(*"mp4v"),
+                float(settings.fps),
+                (settings.width, settings.height),
+            )
+            if not writer.isOpened():
+                raise RuntimeError("opencv VideoWriter could not open output path")
+
+            try:
+                for scene in scenes:
+                    start = float(scene.get("start_sec", 0.0))
+                    end = float(scene.get("end_sec", start + 1.0))
+                    duration = max(0.1, end - start)
+                    frame_count = max(1, int(round(duration * settings.fps)))
+                    frame = self._scene_background_frame(scene=scene, settings=settings)
+                    for _ in range(frame_count):
+                        writer.write(frame)
+            finally:
+                writer.release()
+
+            with open(out_path, "rb") as f:
+                data = f.read()
+            return self.store.put(
+                data=data,
+                content_type="video/mp4",
+                tags=["render", preset, "fallback", "noaudio"],
+            )
+        finally:
+            if os.path.exists(out_path):
+                try:
+                    os.unlink(out_path)
+                except Exception:
+                    pass
+
+    def _scene_background_frame(self, scene: Dict[str, Any], settings: RenderSettings):
+        layers = scene.get("layers", [])
+        bg_asset = None
+        for layer in layers:
+            if not isinstance(layer, dict):
+                continue
+            if layer.get("type") == "background":
+                bg_asset = layer.get("asset_id")
+                break
+        if bg_asset is None:
+            for layer in layers:
+                if isinstance(layer, dict) and layer.get("asset_id"):
+                    bg_asset = layer.get("asset_id")
+                    break
+
+        if bg_asset:
+            try:
+                path = self._resolve(str(bg_asset))
+                if _is_image(path):
+                    img = cv2.imread(path)
+                    if img is not None:
+                        return cv2.resize(img, (settings.width, settings.height))
+                cap = cv2.VideoCapture(path)
+                ok, frame = cap.read()
+                cap.release()
+                if ok and frame is not None:
+                    return cv2.resize(frame, (settings.width, settings.height))
+            except Exception:
+                pass
+
+        return _solid_black_frame(settings.width, settings.height)
+
     def _render_scene(self, scene: Dict[str, Any], out_path: str, settings: RenderSettings) -> None:
         start = float(scene.get("start_sec", 0.0))
         end = float(scene.get("end_sec", 0.0))
@@ -84,6 +176,17 @@ class RenderService:
 
         inputs: List[str] = []
         filters: List[str] = []
+
+        # Use a synthetic full-duration base so short/degenerate source clips
+        # cannot collapse scene video duration.
+        inputs += [
+            "-f",
+            "lavfi",
+            "-t",
+            _fmt_time(duration),
+            "-i",
+            f"color=c=black:s={settings.width}x{settings.height}:r={settings.fps}",
+        ]
 
         bg_path = self._resolve(bg_layer["asset_id"])
         bg_is_image = _is_image(bg_path)
@@ -106,14 +209,17 @@ class RenderService:
             asset_path = self._resolve(layer["asset_id"])
             inputs += ["-i", asset_path]
 
+        filters.append("[0:v]format=rgba[base0]")
         filters.append(
-            f"[0:v]scale={settings.width}:{settings.height}:force_original_aspect_ratio=decrease,"
+            f"[1:v]trim=0:{_fmt_time(duration)},setpts=PTS-STARTPTS,"
+            f"scale={settings.width}:{settings.height}:force_original_aspect_ratio=decrease,"
             f"pad={settings.width}:{settings.height}:(ow-iw)/2:(oh-ih)/2,"
-            "format=rgba[base]"
+            f"format=rgba,tpad=stop_mode=clone:stop_duration={_fmt_time(duration)}[bg]"
         )
+        filters.append("[base0][bg]overlay=0:0:eof_action=pass[base]")
 
         current = "base"
-        video_input_index = 1
+        video_input_index = 2
         for layer in overlay_layers:
             local_start = max(0.0, float(layer.get("start_sec", start)) - start)
             local_end = min(duration, float(layer.get("end_sec", end)) - start)
@@ -122,18 +228,26 @@ class RenderService:
                 continue
 
             position = layer.get("position") or {}
-            x = float(position.get("x", 0.0)) * settings.width
-            y = float(position.get("y", 0.0)) * settings.height
+            # Treat stage positions as normalized anchor points, then clamp to canvas.
+            # This prevents partially off-screen actor overlays and large black regions.
+            x_norm = float(position.get("x", 0.5))
+            y_norm = float(position.get("y", 0.5))
+            x_center = x_norm * settings.width
+            y_center = y_norm * settings.height
             scale = float(layer.get("scale", 1.0))
 
+            # Trim clip to speaking window and shift timestamps so overlay starts
+            # at local_start without needing an "enable=between(...)" expression.
             filters.append(
                 f"[{video_input_index}:v]trim={_fmt_time(local_start)}:{_fmt_time(local_end)},"
-                "setpts=PTS-STARTPTS,"
+                f"setpts=PTS-STARTPTS+{_fmt_time(local_start)}/TB,"
                 f"scale=iw*{scale}:ih*{scale}:flags=bicubic,format=rgba[ov{video_input_index}]"
             )
+            x_expr = f"{_fmt_number(x_center)}-(overlay_w/2)"
+            y_expr = f"{_fmt_number(y_center)}-(overlay_h/2)"
             filters.append(
-                f"[{current}][ov{video_input_index}]overlay={_fmt_number(x)}:{_fmt_number(y)}:"
-                f"enable='between(t,{_fmt_time(local_start)},{_fmt_time(local_end)})'[v{video_input_index}]"
+                f"[{current}][ov{video_input_index}]overlay={x_expr}:{y_expr}:eof_action=pass"
+                f"[v{video_input_index}]"
             )
             current = f"v{video_input_index}"
             video_input_index += 1
@@ -152,7 +266,7 @@ class RenderService:
 
         audio_filters: List[str] = []
         audio_maps: List[str] = []
-        audio_index = 1 + len(overlay_layers)
+        audio_index = 2 + len(overlay_layers)
         for layer in audio:
             local_start = max(0.0, float(layer.get("start_sec", start)) - start)
             local_end = min(duration, float(layer.get("end_sec", end)) - start)
@@ -198,12 +312,39 @@ class RenderService:
         subprocess.run(cmd, check=True)
 
     def _concat_scenes(self, scene_paths: List[str], out_path: str) -> None:
+        if len(scene_paths) == 1:
+            # Avoid concat demuxer timestamp quirks for single-scene episodes.
+            shutil.copyfile(scene_paths[0], out_path)
+            return
         with tempfile.NamedTemporaryFile(mode="w", suffix=".txt", delete=False) as f:
             for path in scene_paths:
                 f.write(f"file '{path}'\n")
             list_path = f.name
         ffmpeg_bin = os.getenv("FFMPEG_BIN", "ffmpeg")
-        cmd = [ffmpeg_bin, "-y", "-f", "concat", "-safe", "0", "-i", list_path, "-c", "copy", out_path]
+        # Re-encode to normalize stream/timebase across scene clips.
+        cmd = [
+            ffmpeg_bin,
+            "-y",
+            "-f",
+            "concat",
+            "-safe",
+            "0",
+            "-i",
+            list_path,
+            "-c:v",
+            "libx264",
+            "-preset",
+            "veryfast",
+            "-crf",
+            "23",
+            "-pix_fmt",
+            "yuv420p",
+            "-c:a",
+            "aac",
+            "-b:a",
+            "192k",
+            out_path,
+        ]
         subprocess.run(cmd, check=True)
 
     def _resolve(self, uri: str) -> str:
@@ -313,3 +454,13 @@ def _fmt_time(value: float) -> str:
 
 def _fmt_number(value: float) -> str:
     return f"{value:.2f}"
+
+
+def _solid_black_frame(width: int, height: int):
+    return cv2.merge(
+        [
+            cv2.UMat(height, width, cv2.CV_8UC1, 0).get(),
+            cv2.UMat(height, width, cv2.CV_8UC1, 0).get(),
+            cv2.UMat(height, width, cv2.CV_8UC1, 0).get(),
+        ]
+    )

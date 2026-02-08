@@ -21,11 +21,15 @@ def _hash_payload(payload: Any) -> str:
 class StepCache:
     def __init__(self, path: Optional[str] = None) -> None:
         self.path = path or os.getenv("ORCH_CACHE_PATH", DEFAULT_CACHE_PATH)
+        self.enabled = False
         _ensure_dir(self.path)
         self._data: Dict[str, str] = {}
         self._load()
 
     def _load(self) -> None:
+        if not self.enabled:
+            self._data = {}
+            return
         if not os.path.exists(self.path):
             self._data = {}
             return
@@ -33,6 +37,8 @@ class StepCache:
             self._data = json.load(f)
 
     def _save(self) -> None:
+        if not self.enabled:
+            return
         _ensure_dir(self.path)
         with open(self.path, "w", encoding="utf-8") as f:
             json.dump(self._data, f, ensure_ascii=True, indent=2)
@@ -41,8 +47,12 @@ class StepCache:
         return f"{step_name}:{_hash_payload(payload)}"
 
     def get(self, key: str) -> Optional[str]:
+        if not self.enabled:
+            return None
         return self._data.get(key)
 
     def set(self, key: str, artifact_id: str) -> None:
+        if not self.enabled:
+            return
         self._data[key] = artifact_id
         self._save()

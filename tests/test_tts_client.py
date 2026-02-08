@@ -15,4 +15,4 @@ def test_tts_client_propagates_url_error(monkeypatch):
     monkeypatch.setattr(urllib.request, "urlopen", _fail)
 
     with pytest.raises(urllib.error.URLError):
-        client.tts_synthesize("hello", "char_1", "neutral")
+        client.tts_synthesize("hello", "char_1", "voice-default", "neutral")

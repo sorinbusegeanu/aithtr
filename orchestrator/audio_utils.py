@@ -2,6 +2,7 @@
 import os
 import subprocess
 import tempfile
+import wave
 from typing import Dict, Iterable, List, Tuple
 
 
@@ -39,14 +40,16 @@ def split_wav_ffmpeg(
     input_path: str,
     segments: Iterable[Dict[str, float]],
     sample_rate: int = 48000,
-    sample_fmt: str = "flt",
 ) -> List[str]:
     """Split a wav into segments using ffmpeg, returning file paths."""
     ffmpeg_bin = os.getenv("FFMPEG_BIN", "ffmpeg")
+    min_duration = max(float(os.getenv("TTS_MIN_LINE_DURATION_SEC", "0.2")), 0.25)
     outputs: List[str] = []
     for idx, seg in enumerate(segments):
         start = float(seg.get("start_sec", 0.0))
         duration = float(seg.get("duration_sec", 0.0))
+        # Extremely short segments (e.g. 1ms) can fail with some ffmpeg/wav builds.
+        # Clamp to a practical minimum so split commands are stable.
         if duration <= 0:
             # create a 1-sample silent file
             with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp:
@@ -59,19 +62,20 @@ def split_wav_ffmpeg(
                 "-i",
                 "anullsrc=channel_layout=mono:sample_rate=%d" % sample_rate,
                 "-t",
-                "0.001",
+                f"{max(min_duration, 0.2):.3f}",
                 "-ar",
                 str(sample_rate),
                 "-ac",
                 "1",
-                "-sample_fmt",
-                sample_fmt,
+                "-c:a",
+                "pcm_s16le",
                 out_path,
             ]
             subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             outputs.append(out_path)
             continue
 
+        duration = max(duration, min_duration, 0.2)
         with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp:
             out_path = tmp.name
         cmd = [
@@ -83,14 +87,53 @@ def split_wav_ffmpeg(
             f"{start:.3f}",
             "-t",
             f"{duration:.3f}",
+            "-af",
+            f"apad=whole_dur={duration:.3f}",
             "-ac",
             "1",
             "-ar",
             str(sample_rate),
-            "-sample_fmt",
-            sample_fmt,
+            "-c:a",
+            "pcm_s16le",
             out_path,
         ]
-        subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        try:
+            subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        except subprocess.CalledProcessError:
+            # Fallback to silence so downstream timeline integrity remains intact.
+            _write_silence_wav(ffmpeg_bin, out_path, sample_rate, duration)
+        if _wav_duration_sec(out_path) < min_duration:
+            _write_silence_wav(ffmpeg_bin, out_path, sample_rate, duration)
         outputs.append(out_path)
     return outputs
+
+
+def _wav_duration_sec(path: str) -> float:
+    try:
+        with wave.open(path, "rb") as wf:
+            frames = wf.getnframes()
+            rate = wf.getframerate() or 1
+            return float(frames) / float(rate)
+    except Exception:
+        return 0.0
+
+
+def _write_silence_wav(ffmpeg_bin: str, out_path: str, sample_rate: int, duration: float) -> None:
+    cmd_silence = [
+        ffmpeg_bin,
+        "-y",
+        "-f",
+        "lavfi",
+        "-i",
+        "anullsrc=channel_layout=mono:sample_rate=%d" % sample_rate,
+        "-t",
+        f"{max(duration, 0.25):.3f}",
+        "-ar",
+        str(sample_rate),
+        "-ac",
+        "1",
+        "-c:a",
+        "pcm_s16le",
+        out_path,
+    ]
+    subprocess.run(cmd_silence, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
