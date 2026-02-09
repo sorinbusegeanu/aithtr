@@ -2,6 +2,7 @@
 import json
 import os
 import re
+import time
 import urllib.error
 import urllib.request
 from dataclasses import dataclass
@@ -27,12 +28,24 @@ def _agent_temp_env_key(agent_name: str) -> str:
     return f"LLM_TEMPERATURE_{normalized.upper()}"
 
 
+def _agent_timeout_env_key(agent_name: str) -> str:
+    normalized = "".join(ch if ch.isalnum() else "_" for ch in (agent_name or "default"))
+    return f"LLM_TIMEOUT_SEC_{normalized.upper()}"
+
+
 def _resolve_temperature(agent_name: str) -> float:
     # Per-agent override wins (e.g., LLM_TEMPERATURE_WRITER).
     value = os.getenv(_agent_temp_env_key(agent_name))
     if value is not None:
         return float(value)
     return _DEFAULT_TEMPERATURES.get(agent_name, 0.1)
+
+
+def _resolve_timeout(agent_name: str) -> int:
+    value = os.getenv(_agent_timeout_env_key(agent_name))
+    if value is not None:
+        return int(value)
+    return int(os.getenv("LLM_TIMEOUT_SEC", "180"))
 
 
 @dataclass
@@ -45,7 +58,7 @@ class LLMConfig:
     seed: Optional[int] = int(os.getenv("LLM_SEED", "42"))
     max_tokens: int = int(os.getenv("LLM_MAX_TOKENS", "2048"))
     json_only: bool = True
-    timeout_sec: int = int(os.getenv("LLM_TIMEOUT_SEC", "180"))
+    timeout_sec: int = 180
 
     def __post_init__(self) -> None:
         if not self.model:
@@ -58,6 +71,7 @@ class LLMConfig:
             self.model = "Qwen/Qwen2.5-3B-Instruct-AWQ"
         if self.temperature is None:
             self.temperature = _resolve_temperature(self.agent_name)
+        self.timeout_sec = _resolve_timeout(self.agent_name)
 
 
 class LLMClient:
@@ -102,6 +116,13 @@ class LLMClient:
             try:
                 with urllib.request.urlopen(req, timeout=self.config.timeout_sec) as resp:
                     raw = resp.read().decode("utf-8")
+            except (TimeoutError, urllib.error.URLError) as err:
+                last_err = err
+                # transient network/service saturation; retry with backoff
+                if attempt < 2:
+                    time.sleep(min(2 ** attempt, 4))
+                    continue
+                raise
             except urllib.error.HTTPError as err:
                 body = ""
                 try:

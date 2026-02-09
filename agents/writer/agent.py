@@ -1,4 +1,5 @@
 """Writer agent: produce screenplay_draft.json."""
+import os
 from typing import Any, Dict, List
 
 from agents.common import LLMClient
@@ -53,6 +54,8 @@ Hard output requirements:
 - line_id must start at line-{start_line_id} and end at line-{end_line_id}, strictly sequential.
 - Keep line_id global; do not reset numbering.
 - If space is tight, shorten line text but keep exact line count.
+- Keep each line concise: {line_word_min}-{line_word_max} words per line.
+- Hard cap: max {line_char_max} characters per line.
 - No repeated line text.
 - No extra keys and no alternate formats.
 """.strip()
@@ -80,6 +83,7 @@ def run(
     max_scenes = int(style_guard.get("max_scenes", 5) or 5)
     if max_scenes < 1:
         max_scenes = 1
+    line_word_min, line_word_max, line_char_max = _line_brevity_constraints(target_duration)
 
     plan_prompt = PROMPT_PLAN.format(
         input_json=input_data,
@@ -120,6 +124,9 @@ def run(
             line_budget=line_budget,
             start_line_id=start_line_id,
             end_line_id=end_line_id,
+            line_word_min=line_word_min,
+            line_word_max=line_word_max,
+            line_char_max=line_char_max,
         )
         if critic_feedback:
             scene_prompt = (
@@ -306,3 +313,42 @@ def _normalize_scene_json(
         "characters": chars,
         "lines": lines_out,
     }
+
+
+def _line_brevity_constraints(target_duration: float) -> tuple[int, int, int]:
+    # Env overrides for short episodes (default: <= 360s).
+    short_max_dur = _env_float("WRITER_LINE_PROFILE_SHORT_MAX_DURATION_SEC", 360.0)
+    short_min_words = _env_int("WRITER_LINE_SHORT_MIN_WORDS", 8)
+    short_max_words = _env_int("WRITER_LINE_SHORT_MAX_WORDS", 12)
+    short_max_chars = _env_int("WRITER_LINE_SHORT_MAX_CHARS", 80)
+
+    # Env overrides for medium episodes (default: <= 600s).
+    med_max_dur = _env_float("WRITER_LINE_PROFILE_MEDIUM_MAX_DURATION_SEC", 600.0)
+    med_min_words = _env_int("WRITER_LINE_MEDIUM_MIN_WORDS", 8)
+    med_max_words = _env_int("WRITER_LINE_MEDIUM_MAX_WORDS", 14)
+    med_max_chars = _env_int("WRITER_LINE_MEDIUM_MAX_CHARS", 96)
+
+    # Env overrides for long episodes (> medium threshold).
+    long_min_words = _env_int("WRITER_LINE_LONG_MIN_WORDS", 10)
+    long_max_words = _env_int("WRITER_LINE_LONG_MAX_WORDS", 16)
+    long_max_chars = _env_int("WRITER_LINE_LONG_MAX_CHARS", 110)
+
+    if target_duration <= short_max_dur:
+        return (short_min_words, max(short_min_words, short_max_words), max(40, short_max_chars))
+    if target_duration <= med_max_dur:
+        return (med_min_words, max(med_min_words, med_max_words), max(40, med_max_chars))
+    return (long_min_words, max(long_min_words, long_max_words), max(40, long_max_chars))
+
+
+def _env_int(name: str, default: int) -> int:
+    try:
+        return int(os.getenv(name, str(default)))
+    except Exception:
+        return default
+
+
+def _env_float(name: str, default: float) -> float:
+    try:
+        return float(os.getenv(name, str(default)))
+    except Exception:
+        return default

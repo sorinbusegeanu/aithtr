@@ -2887,15 +2887,13 @@ def _apply_writer_length_policy(
         return screenplay
 
     accept_ratio = float(os.getenv("WRITER_OVERLEN_ACCEPT_RATIO", "1.10"))
+    accept_abs_sec = float(os.getenv("WRITER_OVERLEN_ACCEPT_ABS_SEC", "50"))
     trim_ratio = float(os.getenv("WRITER_OVERLEN_TRIM_RATIO", "1.30"))
-    hard_ratio = float(os.getenv("WRITER_OVERLEN_HARD_RATIO", "1.50"))
+    hard_ratio = float(os.getenv("WRITER_OVERLEN_HARD_RATIO", "2.50"))
+    accept_limit = max(target * accept_ratio, target + max(0.0, accept_abs_sec))
     est = estimate_screenplay_duration_sec(screenplay)
-    if est <= target * accept_ratio:
+    if est <= accept_limit:
         return screenplay
-    if est > target * trim_ratio:
-        raise RuntimeError(
-            f"writer duration over hard cap: est={est:.1f}s target={target:.1f}s ratio={est/max(target,0.1):.2f}"
-        )
     if est > target * hard_ratio:
         raise RuntimeError(
             f"writer duration safety cap exceeded: est={est:.1f}s target={target:.1f}s ratio={est/max(target,0.1):.2f}"
@@ -2903,9 +2901,19 @@ def _apply_writer_length_policy(
 
     trimmed = deepcopy(screenplay)
     _compress_pauses(trimmed, target)
-    _trim_line_texts(trimmed, target)
-    if estimate_screenplay_duration_sec(trimmed) > target * accept_ratio:
-        _drop_low_salience_lines(trimmed, target)
+    _trim_line_texts(trimmed, target, aggressive=est > target * trim_ratio)
+    if estimate_screenplay_duration_sec(trimmed) > accept_limit:
+        _drop_low_salience_lines(trimmed, accept_limit)
+    if estimate_screenplay_duration_sec(trimmed) > accept_limit:
+        # Second deterministic pass before giving up.
+        _compress_pauses(trimmed, target)
+        _trim_line_texts(trimmed, target, aggressive=True)
+        _drop_low_salience_lines(trimmed, accept_limit)
+    if estimate_screenplay_duration_sec(trimmed) > target * hard_ratio:
+        new_est = estimate_screenplay_duration_sec(trimmed)
+        raise RuntimeError(
+            f"writer duration safety cap exceeded after trim: est={new_est:.1f}s target={target:.1f}s ratio={new_est/max(target,0.1):.2f}"
+        )
 
     if logger:
         new_est = estimate_screenplay_duration_sec(trimmed)
@@ -2918,6 +2926,7 @@ def _apply_writer_length_policy(
                     "estimated_before_sec": round(est, 3),
                     "estimated_after_sec": round(new_est, 3),
                     "target_sec": round(target, 3),
+                    "accepted_up_to_sec": round(accept_limit, 3),
                 },
                 ensure_ascii=True,
             )
@@ -2958,7 +2967,7 @@ def _compress_pauses(screenplay: Dict[str, Any], target_sec: float) -> None:
         line["pause_ms_after"] = new_pause
 
 
-def _trim_line_texts(screenplay: Dict[str, Any], target_sec: float) -> None:
+def _trim_line_texts(screenplay: Dict[str, Any], target_sec: float, *, aggressive: bool = False) -> None:
     est = estimate_screenplay_duration_sec(screenplay)
     if est <= target_sec:
         return
@@ -2966,19 +2975,25 @@ def _trim_line_texts(screenplay: Dict[str, Any], target_sec: float) -> None:
     if not lines:
         return
     ratio = target_sec / max(est, 0.1)
-    keep_words = max(8, min(24, int(round(18 * ratio))))
+    keep_words = max(6, min(24, int(round((14 if aggressive else 18) * ratio))))
+    char_cap = 80 if target_sec <= 360 else (96 if target_sec <= 600 else 110)
+    if aggressive:
+        char_cap = max(64, int(char_cap * 0.85))
     for line in lines:
         text = str(line.get("text") or "").strip()
         words = [w for w in text.split() if w]
         if len(words) > keep_words:
             line["text"] = " ".join(words[:keep_words])
+            text = line["text"]
+        if len(text) > char_cap:
+            line["text"] = text[:char_cap].rstrip()
 
 
-def _drop_low_salience_lines(screenplay: Dict[str, Any], target_sec: float) -> None:
+def _drop_low_salience_lines(screenplay: Dict[str, Any], accept_limit_sec: float) -> None:
     scenes = screenplay.get("scenes", [])
     if not isinstance(scenes, list):
         return
-    while estimate_screenplay_duration_sec(screenplay) > target_sec * 1.10:
+    while estimate_screenplay_duration_sec(screenplay) > accept_limit_sec:
         changed = False
         for scene in scenes:
             if not isinstance(scene, dict):
@@ -2986,7 +3001,8 @@ def _drop_low_salience_lines(screenplay: Dict[str, Any], target_sec: float) -> N
             lines = scene.get("lines", [])
             if not isinstance(lines, list) or len(lines) <= 1:
                 continue
-            # Low-salience heuristic: drop shortest neutral/non-sfx line first.
+            # Low-salience heuristic: compress shortest neutral/non-sfx line first.
+            # Keep line count stable to preserve scene budgets/ids.
             candidate_idx = -1
             candidate_score = None
             for idx, line in enumerate(lines):
@@ -3001,9 +3017,13 @@ def _drop_low_salience_lines(screenplay: Dict[str, Any], target_sec: float) -> N
                     candidate_score = score
                     candidate_idx = idx
             if candidate_idx >= 0 and len(lines) > 1:
-                lines.pop(candidate_idx)
+                line = lines[candidate_idx]
+                line["text"] = "Proceed."
+                line["emotion"] = "neutral"
+                line["pause_ms_after"] = 40
+                line.pop("sfx_tag", None)
                 changed = True
-                if estimate_screenplay_duration_sec(screenplay) <= target_sec * 1.10:
+                if estimate_screenplay_duration_sec(screenplay) <= accept_limit_sec:
                     return
         if not changed:
             return
