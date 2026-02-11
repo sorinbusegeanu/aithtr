@@ -288,7 +288,7 @@ def _normalize_scene_json(
             speaker = chars[idx % len(chars)] if chars else ""
         text = str(src.get("text") or "").strip()
         if not text:
-            text = f"{speaker} continues the mythic narrative."
+            text = f"{speaker} explains a distinct mythic element in beat {start_line_id + idx}."
         emotion = str(src.get("emotion") or "neutral").strip() or "neutral"
         pause_raw = src.get("pause_ms_after", 250)
         try:

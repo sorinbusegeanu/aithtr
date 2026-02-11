@@ -86,7 +86,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--resume-from-step",
         default=None,
-        help="Re-run from this step onward (showrunner, writer, dramaturg, casting, scene, director, voice_seeder, performance, editor, render_preview, render_final, qc, curator)",
+        help="Re-run from this step onward (showrunner, writer, dramaturg, casting, scene, assets, director, voice_seeder, performance, editor, render_preview, render_final, qc, curator)",
     )
     parser.add_argument(
         "--force-regenerate-voices",

@@ -15,22 +15,46 @@ def build_segments(
     if not lines:
         return []
     n = len(lines)
+    min_line_sec = max(float(os.getenv("TTS_MIN_SPLIT_LINE_DURATION_SEC", "0.6")), 0.2)
     pause_total = pause_sec * (n - 1)
     if total_duration_sec <= 0:
         return [{"start_sec": 0.0, "duration_sec": 0.0} for _ in lines]
 
-    if pause_total >= total_duration_sec and n > 1:
+    if n > 1 and pause_total >= total_duration_sec:
         pause_sec = max(0.0, total_duration_sec / (n - 1))
         pause_total = pause_sec * (n - 1)
+    # Prefer minimum per-line durations. If impossible, reduce pause first.
+    required_min_total = min_line_sec * n + pause_total
+    if required_min_total > total_duration_sec and n > 1:
+        pause_sec = max(0.0, (total_duration_sec - min_line_sec * n) / (n - 1))
+        pause_total = pause_sec * (n - 1)
+        required_min_total = min_line_sec * n + pause_total
 
     usable = max(total_duration_sec - pause_total, 0.001 * n)
     weights = [max(len((line.get("text") or "").strip()), 1) for line in lines]
     total_weight = sum(weights) or 1
 
+    durations = [usable * (weight / total_weight) for weight in weights]
+    if required_min_total <= total_duration_sec:
+        deficit_idx = [i for i, d in enumerate(durations) if d < min_line_sec]
+        if deficit_idx:
+            needed = sum(min_line_sec - durations[i] for i in deficit_idx)
+            surplus_idx = [i for i, d in enumerate(durations) if d > min_line_sec]
+            for i in surplus_idx:
+                if needed <= 0:
+                    break
+                take = min(durations[i] - min_line_sec, needed)
+                durations[i] -= take
+                needed -= take
+            for i in deficit_idx:
+                durations[i] = min_line_sec
+    else:
+        # Not enough total time for strict minimums; use uniform durations.
+        durations = [max(usable / n, 0.001) for _ in lines]
+
     segments: List[Dict[str, float]] = []
     cursor = 0.0
-    for weight in weights:
-        dur = usable * (weight / total_weight)
+    for dur in durations:
         segments.append({"start_sec": cursor, "duration_sec": dur})
         cursor += dur + pause_sec
     return segments
@@ -44,6 +68,7 @@ def split_wav_ffmpeg(
     """Split a wav into segments using ffmpeg, returning file paths."""
     ffmpeg_bin = os.getenv("FFMPEG_BIN", "ffmpeg")
     min_duration = max(float(os.getenv("TTS_MIN_LINE_DURATION_SEC", "0.2")), 0.25)
+    split_pad = max(float(os.getenv("AVATAR_SPLIT_PAD_SEC", "0.15")), 0.0)
     outputs: List[str] = []
     for idx, seg in enumerate(segments):
         start = float(seg.get("start_sec", 0.0))
@@ -75,7 +100,9 @@ def split_wav_ffmpeg(
             outputs.append(out_path)
             continue
 
-        duration = max(duration, min_duration, 0.2)
+        # Add small context padding so very short clips still contain visible motion.
+        start = max(0.0, start - (split_pad * 0.5))
+        duration = max(duration + split_pad, min_duration, 0.2)
         with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp:
             out_path = tmp.name
         cmd = [

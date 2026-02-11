@@ -1,0 +1,18 @@
+comfyui:
+  enabled: true
+  host: "192.168.0.51"
+  port: 8188
+  max_wait_sec: 300
+  poll_interval_sec: 1
+  request_timeout_sec: 10
+  workflow_portrait_json_path: "workflows/comfy/portrait_sdxl_workflow.json"
+  workflow_idle_avatar_json_path: "workflows/comfy/idle_avatar_video.json"
+  idle_avatar_enabled: false
+  idle_avatar_seconds: 4
+  idle_avatar_fps: 25
+  workflow_background_json_path: "workflows/comfy/background_sdxl.json"
+  backgrounds_enabled: true
+  background_width: 1280
+  background_height: 720
+  output_fetch_mode: "http" # allowed values: "http" | "shared_fs"
+  shared_fs_output_root: "" # leave empty when output_fetch_mode=http

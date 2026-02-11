@@ -40,6 +40,9 @@ def validate_screenplay(
     token_uniqueness: List[float] = []
     total_words = 0
     total_lines = 0
+    line_canonical_no_punct: List[str] = []
+    min_words_per_line = int(os.getenv("SCREENPLAY_MIN_WORDS_PER_LINE", "5"))
+    min_chars_per_line = int(os.getenv("SCREENPLAY_MIN_CHARS_PER_LINE", "20"))
 
     max_line_len = None
     max_scenes = None
@@ -109,12 +112,26 @@ def validate_screenplay(
             else:
                 canonical = " ".join(text.lower().split())
                 line_texts.append(canonical)
+                canon_no_punct = re.sub(r"[^a-z0-9\s]", "", canonical)
+                canon_no_punct = " ".join(canon_no_punct.split())
+                if canon_no_punct:
+                    line_canonical_no_punct.append(canon_no_punct)
                 tokens = [t for t in re.split(r"\W+", canonical) if t]
                 total_words += len(tokens)
                 if tokens:
                     token_uniqueness.append(len(set(tokens)) / float(len(tokens)))
                 else:
                     token_uniqueness.append(0.0)
+                if len(tokens) < min_words_per_line or len(text) < min_chars_per_line:
+                    errors.append(f"line_too_short_content:{line_id}")
+                # Filler/degenerate lines are rejected hard.
+                if canonical in {"proceed.", "continue.", "...", "okay.", "next."}:
+                    errors.append(f"filler_line_text:{line_id}")
+                if re.match(r"^[a-z][a-z0-9 _-]{0,40} continues the mythic narrative\.?$", canonical):
+                    errors.append(f"filler_line_text:{line_id}")
+                # Reject speaker labels embedded into line text, e.g. "Dr. Brainy: ...".
+                if re.match(r"^[A-Za-z][A-Za-z0-9 _-]{0,40}:\s", text):
+                    errors.append(f"speaker_label_in_text:{line_id}")
             if max_line_len is not None and len(text) > int(max_line_len):
                 errors.append(f"line_too_long:{line_id}")
             if forbidden:
@@ -145,12 +162,18 @@ def validate_screenplay(
         total = len(line_texts)
         max_repeat = max(counts.values())
         repeated_fraction = max_repeat / float(total)
-        repeat_limit = max(int(os.getenv("SCREENPLAY_MAX_IDENTICAL_LINE_REPEAT", "3")), 1)
+        repeat_limit = max(int(os.getenv("SCREENPLAY_MAX_IDENTICAL_LINE_REPEAT", "2")), 1)
         repeated_fraction_limit = float(os.getenv("SCREENPLAY_MAX_IDENTICAL_LINE_RATIO", "0.35"))
         if max_repeat > repeat_limit:
             errors.append(f"line_repeated_too_many_times:{max_repeat}")
         if repeated_fraction > repeated_fraction_limit:
             errors.append(f"line_repetition_ratio_too_high:{repeated_fraction:.3f}")
+    if line_canonical_no_punct:
+        norm_counts = Counter(line_canonical_no_punct)
+        max_norm_repeat = max(norm_counts.values())
+        norm_repeat_limit = max(int(os.getenv("SCREENPLAY_MAX_NORMALIZED_LINE_REPEAT", "2")), 1)
+        if max_norm_repeat > norm_repeat_limit:
+            errors.append(f"line_repeated_too_many_times_normalized:{max_norm_repeat}")
     if token_uniqueness:
         avg_unique_ratio = sum(token_uniqueness) / float(len(token_uniqueness))
         min_unique_ratio = float(os.getenv("SCREENPLAY_MIN_UNIQUE_TOKEN_RATIO", "0.45"))
@@ -202,6 +225,7 @@ def validate_cast_plan_contract(
     errors: List[str] = []
     roles = cast_plan.get("roles") or []
     character_ids: Set[str] = set()
+    avatar_ids: Set[str] = set()
     aliases: Set[str] = set()
     for role in roles:
         if not isinstance(role, dict):
@@ -226,6 +250,10 @@ def validate_cast_plan_contract(
             errors.append(f"missing_voice_id:{character_id or role_name or 'unknown'}")
         if not avatar_id:
             errors.append(f"missing_avatar_id:{character_id or role_name or 'unknown'}")
+        elif avatar_id in avatar_ids:
+            errors.append(f"duplicate_avatar_id:{avatar_id}")
+        else:
+            avatar_ids.add(avatar_id)
         for value in (character_id, display_name, role_name):
             if value:
                 aliases.add(value)
