@@ -177,17 +177,6 @@ class RenderService:
         inputs: List[str] = []
         filters: List[str] = []
 
-        # Use a synthetic full-duration base so short/degenerate source clips
-        # cannot collapse scene video duration.
-        inputs += [
-            "-f",
-            "lavfi",
-            "-t",
-            _fmt_time(duration),
-            "-i",
-            f"color=c=black:s={settings.width}x{settings.height}:r={settings.fps}",
-        ]
-
         bg_path = self._resolve(bg_layer["asset_id"])
         bg_is_image = _is_image(bg_path)
         if bg_is_image:
@@ -209,17 +198,15 @@ class RenderService:
             asset_path = self._resolve(layer["asset_id"])
             inputs += ["-i", asset_path]
 
-        filters.append("[0:v]format=rgba[base0]")
         filters.append(
-            f"[1:v]trim=0:{_fmt_time(duration)},setpts=PTS-STARTPTS,"
+            f"[0:v]trim=0:{_fmt_time(duration)},setpts=PTS-STARTPTS,"
             f"scale={settings.width}:{settings.height}:force_original_aspect_ratio=decrease,"
             f"pad={settings.width}:{settings.height}:(ow-iw)/2:(oh-ih)/2,"
             f"format=rgba,tpad=stop_mode=clone:stop_duration={_fmt_time(duration)}[bg]"
         )
-        filters.append("[base0][bg]overlay=0:0:eof_action=pass[base]")
 
-        current = "base"
-        video_input_index = 2
+        current = "bg"
+        video_input_index = 1
         for layer in overlay_layers:
             local_start = max(0.0, float(layer.get("start_sec", start)) - start)
             local_end = min(duration, float(layer.get("end_sec", end)) - start)
@@ -266,7 +253,7 @@ class RenderService:
 
         audio_filters: List[str] = []
         audio_maps: List[str] = []
-        audio_index = 2 + len(overlay_layers)
+        audio_index = 1 + len(overlay_layers)
         for layer in audio:
             local_start = max(0.0, float(layer.get("start_sec", start)) - start)
             local_end = min(duration, float(layer.get("end_sec", end)) - start)

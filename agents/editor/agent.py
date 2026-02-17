@@ -15,8 +15,9 @@ Requirements:
 - Each scene: scene_id, start_sec, end_sec, layers[], audio[].
 - layers: {{type, asset_id, start_sec, end_sec, z, optional position{{x,y}}, optional scale}}.
 - audio: {{type, asset_id, start_sec, end_sec, optional gain_db}}.
-- Use performances if provided: for each (scene_id, character_id), you may have one video_artifact_id and segments with line_id + start_sec/end_sec.
-  In that case, create one layer per line segment that references the same video_artifact_id and uses the segment start/end times.
+- Use performances if provided for ordering and layer assignment only.
+- Do not invent timing from fixed scene duration or equal spacing.
+- Prefer per-line references (line_id) for both audio and actor layers; timing is injected later by pipeline normalization.
 - No extra keys.
 """.strip()
 
@@ -81,8 +82,7 @@ def _sanitize_editor_input(input_data: Dict[str, Any]) -> Dict[str, Any]:
                     segs_out.append(
                         {
                             "line_id": seg.get("line_id"),
-                            "start_sec": seg.get("start_sec"),
-                            "end_sec": seg.get("end_sec"),
+                            "duration_sec": seg.get("duration_sec"),
                         }
                     )
                 chars_out.append(
@@ -92,6 +92,8 @@ def _sanitize_editor_input(input_data: Dict[str, Any]) -> Dict[str, Any]:
                         "error_code": row.get("error_code"),
                         "wav_artifact_id": row.get("wav_artifact_id"),
                         "video_artifact_id": row.get("video_artifact_id"),
+                        "line_audio_artifacts": row.get("line_audio_artifacts", []),
+                        "line_video_artifacts": row.get("line_video_artifacts", []),
                         "segments": segs_out,
                     }
                 )
@@ -236,29 +238,49 @@ def _build_timeline_deterministic(input_data: Dict[str, Any]) -> Dict[str, Any]:
             if not isinstance(segs, list):
                 segs = []
 
-            if wav_id:
+            line_audio_artifacts = row.get("line_audio_artifacts", [])
+            if isinstance(line_audio_artifacts, list):
+                for item in line_audio_artifacts:
+                    if not isinstance(item, dict):
+                        continue
+                    wav_line_id = str(item.get("wav_artifact_id") or "").strip()
+                    if not wav_line_id:
+                        continue
+                    audio.append(
+                        {
+                            "type": "dialogue",
+                            "asset_id": wav_line_id,
+                            "line_id": item.get("line_id"),
+                            "character_id": character_id,
+                            "start_sec": start,
+                            "end_sec": start,
+                        }
+                    )
+            elif wav_id:
                 audio.append(
                     {
                         "type": "dialogue",
                         "asset_id": wav_id,
                         "start_sec": start,
-                        "end_sec": end,
+                        "end_sec": start,
                     }
                 )
 
-            if video_id and segs:
-                for seg in segs:
-                    if not isinstance(seg, dict):
+            line_video_artifacts = row.get("line_video_artifacts", [])
+            if isinstance(line_video_artifacts, list) and line_video_artifacts:
+                for item in line_video_artifacts:
+                    if not isinstance(item, dict):
                         continue
-                    s = float(seg.get("start_sec", 0.0) or 0.0)
-                    e = float(seg.get("end_sec", s) or s)
-                    if e <= s:
+                    line_video_id = str(item.get("video_artifact_id") or "").strip()
+                    if not line_video_id:
                         continue
-                    layer: Dict[str, Any] = {
+                    layer = {
                         "type": "actor",
-                        "asset_id": video_id,
-                        "start_sec": start + s,
-                        "end_sec": start + e,
+                        "asset_id": line_video_id,
+                        "line_id": item.get("line_id"),
+                        "character_id": character_id,
+                        "start_sec": start,
+                        "end_sec": start,
                         "z": z,
                     }
                     pos = stage_positions.get(character_id)
@@ -271,8 +293,9 @@ def _build_timeline_deterministic(input_data: Dict[str, Any]) -> Dict[str, Any]:
                     "type": "actor",
                     "asset_id": video_id,
                     "start_sec": start,
-                    "end_sec": end,
+                    "end_sec": start,
                     "z": z,
+                    "character_id": character_id,
                 }
                 pos = stage_positions.get(character_id)
                 if pos:
@@ -298,18 +321,22 @@ def _build_timeline_deterministic(input_data: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def _scene_duration_from_rows(rows: List[Dict[str, Any]]) -> float:
-    max_end = 0.0
+    total = 0.0
     for row in rows:
-        segs = row.get("segments", [])
-        if not isinstance(segs, list):
+        line_audio_artifacts = row.get("line_audio_artifacts", [])
+        if isinstance(line_audio_artifacts, list) and line_audio_artifacts:
+            for item in line_audio_artifacts:
+                if not isinstance(item, dict):
+                    continue
+                total += max(float(item.get("duration_sec", 0.0) or 0.0), 0.0)
             continue
-        for seg in segs:
-            if not isinstance(seg, dict):
-                continue
-            e = float(seg.get("end_sec", 0.0) or 0.0)
-            if e > max_end:
-                max_end = e
-    return max(max_end, 1.0)
+        segs = row.get("segments", [])
+        if isinstance(segs, list):
+            for seg in segs:
+                if not isinstance(seg, dict):
+                    continue
+                total += max(float(seg.get("duration_sec", 0.0) or 0.0), 0.0)
+    return max(total, 1.0)
 
 
 def _stage_positions(stage_items: Any) -> Dict[str, Tuple[float, float, float]]:

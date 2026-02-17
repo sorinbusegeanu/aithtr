@@ -93,6 +93,16 @@ def ensure_character_idle_video(
         subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         return out_mp4_path, None
     except Exception:
+        allow_cv_fallback = os.getenv("ASSETS_ALLOW_OPENCV_FALLBACK", "0").strip().lower() in {
+            "1",
+            "true",
+            "yes",
+            "on",
+        }
+        if not allow_cv_fallback:
+            _raise_stage_validation_error(
+                f"assets idle video generation failed for character '{character_id}' and OpenCV fallback is disabled"
+            )
         # Small OpenCV fallback for local-only environments.
         img = cv2.imread(portrait_path)
         if img is None:
@@ -145,13 +155,9 @@ def ensure_scene_background(scene: Dict[str, Any], episode_id: str, comfy_cfg: C
                 f"assets background generation failed for scene '{scene_id}': {err}"
             )
 
-    # Background generation disabled; keep deterministic local placeholder.
-    out_path = os.path.join(out_dir, f"{scene_id}.png")
-    prompt_text = str(scene.get("background_prompt") or "").strip() or f"background prompt for {scene_id}"
-    canvas = _placeholder_background(prompt_text)
-    if not cv2.imwrite(out_path, canvas):
-        raise RuntimeError(f"ensure_scene_background: failed to write placeholder background for '{scene_id}'")
-    return out_path, None
+    _raise_stage_validation_error(
+        f"assets background generation disabled or workflow missing for scene '{scene_id}'"
+    )
 
 
 def build_assets(
@@ -248,30 +254,15 @@ def _raise_stage_validation_error(message: str) -> None:
     except Exception:
         raise RuntimeError(message)
     raise StageValidationError(
-        json.dumps(
-            {
-                "stage": "assets",
-                "line_id": None,
-                "artifact_path": None,
-                "reason": "BACKGROUND_GENERATION_FAILED",
-                "message": message,
-                "extra": {},
-            },
-            ensure_ascii=True,
-        )
+        {
+            "stage": "assets",
+            "line_id": None,
+            "artifact_path": None,
+            "reason": "BACKGROUND_GENERATION_FAILED",
+            "message": message,
+            "extra": {},
+        }
     )
-
-
-def _placeholder_background(prompt_text: str):
-    img = 255 * (cv2.UMat(720, 1280, cv2.CV_8UC3).get() * 0)
-    img[:] = (18, 26, 36)
-    cv2.putText(img, "BACKGROUND PLACEHOLDER", (40, 90), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (220, 220, 220), 2)
-    lines = [prompt_text[i : i + 70] for i in range(0, len(prompt_text), 70)] or [prompt_text]
-    y = 160
-    for line in lines[:8]:
-        cv2.putText(img, line, (40, y), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (210, 210, 210), 2)
-        y += 40
-    return img
 
 
 def _coerce_comfy_cfg(cfg: Dict[str, Any]) -> ComfyUIConfig:

@@ -129,13 +129,13 @@ def split_wav_ffmpeg(
         except subprocess.CalledProcessError:
             # Fallback to silence so downstream timeline integrity remains intact.
             _write_silence_wav(ffmpeg_bin, out_path, sample_rate, duration)
-        if _wav_duration_sec(out_path) < min_duration:
+        if get_wav_duration_sec(out_path) < min_duration:
             _write_silence_wav(ffmpeg_bin, out_path, sample_rate, duration)
         outputs.append(out_path)
     return outputs
 
 
-def _wav_duration_sec(path: str) -> float:
+def get_wav_duration_sec(path: str) -> float:
     try:
         with wave.open(path, "rb") as wf:
             frames = wf.getnframes()
@@ -143,6 +143,11 @@ def _wav_duration_sec(path: str) -> float:
             return float(frames) / float(rate)
     except Exception:
         return 0.0
+
+
+def _wav_duration_sec(path: str) -> float:
+    # Backward-compatible alias for older call sites.
+    return get_wav_duration_sec(path)
 
 
 def _write_silence_wav(ffmpeg_bin: str, out_path: str, sample_rate: int, duration: float) -> None:

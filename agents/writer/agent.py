@@ -57,6 +57,12 @@ Hard output requirements:
 - Keep each line concise: {line_word_min}-{line_word_max} words per line.
 - Hard cap: max {line_char_max} characters per line.
 - No repeated line text.
+- Forbidden template/filler patterns (case-insensitive):
+  - "explains a distinct mythic element"
+  - "in beat"
+  - "scene-" used with ordinal-only beat text (e.g., "scene-1 beat-2")
+- Every line must contain at least one concrete named entity (place, object, or character-specific detail)
+  that is not shared across all lines.
 - No extra keys and no alternate formats.
 """.strip()
 
